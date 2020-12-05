@@ -25,6 +25,9 @@ jobs:
           make -j4
           sudo make install
           popd
+      - name: Show PHP version
+        run: |
+          php --version
       - name: Clone
         uses: actions/checkout@master
       - name: Build and Test
