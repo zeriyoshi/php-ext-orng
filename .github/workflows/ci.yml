@@ -7,7 +7,7 @@ jobs:
     timeout-minutes: 60
     strategy:
       matrix:
-        branch: ["PHP-8.0", "master"]
+        branch: ["PHP-7.3", "PHP-7.4", "PHP-8.0", "master"]
         ts: ["nts", "zts"]
     steps:
       - name: Setup PHP
@@ -20,7 +20,11 @@ jobs:
           ./buildconf --force
           case "${{ matrix.ts }}" in
             "nts") ./configure --without-pear --disable-cgi --enable-debug --with-valgrind;;
-            "zts") ./configure --without-pear --disable-cgi --enable-debug --with-valgrind --enable-zts;;
+            "zts")
+              case "${{ matrix.branch }}" in
+                "PHP-7.3"|"PHP-7.4") ./configure --without-pear --disable-cgi --enable-debug --with-valgrind --enable-maintainer-zts;;
+                *) ./configure --without-pear --disable-cgi --enable-debug --with-valgrind --enable-zts;;
+              esac;;
           esac
           make -j4
           sudo make install
