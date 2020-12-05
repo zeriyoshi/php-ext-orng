@@ -1,4 +1,7 @@
 # Objective RNG extension for PHP
+![CI](https://github.com/zeriyoshi/php-ext-orng/workflows/CI/badge.svg)
+
+requires: PHP >= 8.0 (currently, support for 7.x ongoing)
 
 ## Introduction
 
