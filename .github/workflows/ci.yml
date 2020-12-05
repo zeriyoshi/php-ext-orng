@@ -1,0 +1,41 @@
+name: CI
+on: [push]
+jobs:
+  master:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        branch: ["PHP-8.0", "master"]
+        ts: ["nts", "zts"]
+    steps:
+      - name: Setup PHP
+        run: |
+          pushd "/tmp"
+          sudo apt-get update
+          sudo apt-get install -y "git" "build-essential" "valgrind" "autoconf" "bison" "re2c" "libxml2-dev" "libsqlite3-dev" "pkg-config"
+          git clone --depth=1 --branch="${{ matrix.branch }}" "https://github.com/php/php-src.git" "php-src"
+          cd "php-src"
+          ./buildconf --force
+          case "${{ matrix.ts }}" in
+            "nts") ./configure --without-pear --disable-cgi --enable-debug --with-valgrind;;
+            "zts") ./configure --without-pear --disable-cgi --enable-debug --with-valgrind --enable-zts;;
+          esac
+          make -j4
+          sudo make install
+          popd
+      - name: Clone
+        uses: actions/checkout@master
+      - name: Build and Test
+        env:
+          NO_INTERACTION: "1"
+          REPORT_EXIT_STATUS: "1"
+          USE_ZEND_ALLOC: "0"
+          ZEND_DONT_UNLOAD_MODULES: "1"
+          TEST_PHP_ARGS: "-m --show-diff"
+        run: |
+          phpize
+          ./configure
+          make
+          make test
+
