@@ -9,6 +9,37 @@ requires: PHP >= 7.3
 
 This is useful for reproducing situations such as poker games.
 
+## Reference
+
+All classes implemented `\ORNG\RNGInterface`. it's so simple.
+
+```php
+<?php
+
+interface \ORNG\RNGInterface
+{
+  /**
+   * Initialize RNG class with seed number.
+   */
+  public function __construct(int $seed);
+
+  /**
+   * Generate next random number.
+   */
+  public function next(): int;
+
+  /**
+   * Generate random number in range.
+   */
+  public function range(int $min, int $max): int;
+}
+```
+
+## Implemented RNG's
+
+- `\ORNG\XorShift128Plus`
+- `\ORNG\GLibCRand`: compatible for GNU libc based PHP 7.0 and earlier `srand()` and `rand()` functions.
+
 ## Example
 
 ```php
@@ -34,18 +65,18 @@ if ($rng_first === $rng2_first) {
 }
 
 /*
-First generated number by $rng: 8625142298246790
-  1: genrated by $rng: 37180929041868370
-  2: genrated by $rng: 4802484992883707356
-  3: genrated by $rng: 3167033282580571667
-  4: genrated by $rng: -1346064048936446922
-  5: genrated by $rng: -4617783150383278012
-  6: genrated by $rng: -2144402002071887622
-  7: genrated by $rng: 5615789191153882182
-  8: genrated by $rng: 5370589511783527133
-  9: genrated by $rng: 5087160346683555124
-  10: genrated by $rng: 7098617399520635796
-First generated number by $rng2: 8625142298246790
+First generated number by $rng: 9158675354017783308
+  1: genrated by $rng: 1441971726010927065
+  2: genrated by $rng: 7969781667560663344
+  3: genrated by $rng: 7634556340589501701
+  4: genrated by $rng: 6091974329639073515
+  5: genrated by $rng: 2182242786293063306
+  6: genrated by $rng: 6432679252689450613
+  7: genrated by $rng: 6376292334233783764
+  8: genrated by $rng: 7389635648749466789
+  9: genrated by $rng: 1149666737513751008
+  10: genrated by $rng: 705725663761726164
+First generated number by $rng2: 9158675354017783308
 object-scope confirmed.
 */
 ```
