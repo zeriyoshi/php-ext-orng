@@ -14,6 +14,7 @@ const EXCEPT_MAX = 20;
 
 $classes = [
     \ORNG\XorShift128Plus::class,
+    \ORNG\GLibCRand::class,
 ];
 $excepts = range(EXCEPT_MIN, EXCEPT_MAX);
 
