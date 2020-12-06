@@ -1,11 +1,6 @@
 /* This is a generated file, edit the .stub.php file instead.
  * Stub hash: 7e3885031c98b27dfc0f365d51f5da5311f1ccf6 */
 
-/* For compatibility with older PHP versions */
-#ifndef ZEND_ABSTRACT_ME_WITH_FLAGS
-#define ZEND_ABSTRACT_ME_WITH_FLAGS(classname, name, arg_info, flags) ZEND_RAW_FENTRY(#name, NULL, arg_info, flags)
-#endif
-
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_ORNG_RNGInterface___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, seed, IS_LONG, 0)
 ZEND_END_ARG_INFO()

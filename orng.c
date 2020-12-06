@@ -7,6 +7,7 @@
 #include "php.h"
 #include "ext/standard/info.h"
 #include "php_orng.h"
+#include "arginfo_compat.h"
 #include "orng_arginfo.h"
 
 /* For compatibility with older PHP versions */
