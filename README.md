@@ -39,6 +39,8 @@ interface \ORNG\RNGInterface
 
 - `\ORNG\XorShift128Plus`
 - `\ORNG\GLibCRand`: compatible for GNU libc based PHP 7.0 and earlier `srand()` and `rand()` functions.
+- `\ORNG\MT19937`: Genuine implementation of Mersenne Twister from php-src.
+- `\ORNG\MT19937PHP`: PHP specific incorrect Mersenne Twister implementation from php-src.
 
 ## Example
 
