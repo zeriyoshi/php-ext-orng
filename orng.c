@@ -56,7 +56,7 @@ PHPAPI zend_ulong php_orng_XorShift128Plus_next(php_orng_XorShift128Plus_obj *ob
 	return r;
 }
 
-/* {{{ \Orng\XorShift128Plus::__construct(int $seed) */
+/* {{{ \ORNG\XorShift128Plus::__construct(int $seed) */
 PHP_METHOD(ORNG_XorShift128Plus, __construct)
 {
 	zend_long seed;
@@ -80,7 +80,7 @@ PHP_METHOD(ORNG_XorShift128Plus, __construct)
 }
 /* }}} */
 
-/* {{{ \Orng\XorShift128Plus::next(void) */
+/* {{{ \ORNG\XorShift128Plus::next(): int */
 PHP_METHOD(ORNG_XorShift128Plus, next)
 {
 	php_orng_XorShift128Plus_obj *obj = Z_ORNG_XorShift128Plus_P(getThis());
@@ -88,7 +88,7 @@ PHP_METHOD(ORNG_XorShift128Plus, next)
 }
 /* }}} */
 
-/* {{{ \Orng\XorShift128Plus::range(int $min, int $max): int */
+/* {{{ \ORNG\XorShift128Plus::range(int $min, int $max): int */
 PHP_METHOD(ORNG_XorShift128Plus, range)
 {
 	zend_long min, max, n;
@@ -122,7 +122,7 @@ PHP_METHOD(ORNG_XorShift128Plus, range)
 		result = (result << 32) | php_orng_XorShift128Plus_next(obj);
 	}
 
-	RETURN_LONG(result % umax);
+	RETURN_LONG((result % umax) + min);
 }
 /* }}} */
 
