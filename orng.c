@@ -169,7 +169,7 @@ PHPAPI zend_long php_orng_XorShift128Plus_next(php_orng_XorShift128Plus_obj *obj
 	object->s[0] = s0;
 	s1 ^= s1 << 23;
 	object->s[1] = s1 ^ s0 ^ (s1 >> 18) ^ (s0 >> 5);
-	return (result >> 1);
+	return (zend_long) (result >> 1);
 }
 
 /* {{{ \ORNG\XorShift128Plus::__construct(int $seed) */
