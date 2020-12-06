@@ -13,6 +13,8 @@ const SEED = 50;
 $classes = [
     \ORNG\XorShift128Plus::class,
     \ORNG\GLibCRand::class,
+    \ORNG\MT19937::class,
+    \ORNG\MT19937PHP::class,
 ];
 
 foreach ($classes as $class) {
