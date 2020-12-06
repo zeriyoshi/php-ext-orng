@@ -150,20 +150,26 @@ static void php_orng_XorShift128Plus_object_free_storage(zend_object *object)
 	zend_object_std_dtor(&obj->std);
 }
 
-PHPAPI zend_ulong php_orng_XorShift128Plus_next(php_orng_XorShift128Plus_obj *object)
+PHPAPI uint64_t php_orng_XorShift128Plus_splitmix64_next(uint64_t *seed)
 {
-	zend_ulong r, t, s;
+	uint64_t r;
+	r = (*seed += 0x9e3779b97f4a7c15);
+	r = (r ^ (r >> 30)) * 0xbf58476d1ce4e5b9;
+	r = (r ^ (r >> 27)) * 0x94d049bb133111eb;
+	return r ^ (r >> 31);
+}
 
-	t = object->s[0];
-	s = object->s[1];
-	object->s[0] = s;
-	t ^= t << 23;
-	t ^= t >> 17;
-	t ^= s ^ (s >> 26);
-	object->s[1] = t;
-	r = t + s;
+PHPAPI zend_long php_orng_XorShift128Plus_next(php_orng_XorShift128Plus_obj *object)
+{
+	uint64_t s0, s1, result;
 
-	return r;
+	s1 = object->s[0];
+	s0 = object->s[1];
+	result = s0 + s1;
+	object->s[0] = s0;
+	s1 ^= s1 << 23;
+	object->s[1] = s1 ^ s0 ^ (s1 >> 18) ^ (s0 >> 5);
+	return (result >> 1);
 }
 
 /* {{{ \ORNG\XorShift128Plus::__construct(int $seed) */
@@ -177,16 +183,8 @@ PHP_METHOD(ORNG_XorShift128Plus, __construct)
 
 	php_orng_XorShift128Plus_obj *obj = Z_ORNG_XorShift128Plus_P(getThis());
 
-	// initialize on splitmix64
-	zend_ulong r, s;
-	s = (zend_ulong) seed;
-	r = s;
-	s = r + 0x9E3779B97f4A7C15;
-	r = (r ^ (r >> 30)) * 0xBF58476D1CE4E5B9;
-	r = (r ^ (r >> 27)) * 0x94D049BB133111EB;
-	r = r ^ (r >> 31);
-	obj->s[0] = (uint32_t) r;
-	obj->s[1] = (uint32_t) (r >> 32);
+	obj->s[0] = php_orng_XorShift128Plus_splitmix64_next(&seed);
+	obj->s[1] = php_orng_XorShift128Plus_splitmix64_next(&seed);
 }
 /* }}} */
 
