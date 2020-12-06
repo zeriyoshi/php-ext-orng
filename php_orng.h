@@ -1,5 +1,3 @@
-/* orng extension for PHP */
-
 #ifndef PHP_ORNG_H
 # define PHP_ORNG_H
 
@@ -13,6 +11,21 @@ PHP_MSHUTDOWN_FUNCTION(orng);
 PHP_MINFO_FUNCTION(orng);
 
 PHPAPI zend_class_entry *orng_ce_RNGInterface;
+
+PHPAPI zend_class_entry *orng_ce_GLibCRand;
+
+typedef struct _php_orng_GLibCRand_obj {
+	zend_long r[344];
+	int next;
+	zend_object std;
+} php_orng_GLibCRand_obj;
+
+static inline php_orng_GLibCRand_obj *php_orng_GLibCRand_from_obj(zend_object *obj) {
+	return (php_orng_GLibCRand_obj*)((char*)(obj) - XtOffsetOf(php_orng_GLibCRand_obj, std));
+}
+
+# define Z_ORNG_GLibCRand_P(zval) php_orng_GLibCRand_from_obj(Z_OBJ_P(zval))
+
 PHPAPI zend_class_entry *orng_ce_XorShift128Plus;
 
 typedef struct _php_orng_XorShift128Plus_obj {
@@ -24,7 +37,7 @@ static inline php_orng_XorShift128Plus_obj *php_orng_XorShift128Plus_from_obj(ze
 	return (php_orng_XorShift128Plus_obj*)((char*)(obj) - XtOffsetOf(php_orng_XorShift128Plus_obj, std));
 }
 
-#define Z_ORNG_XorShift128Plus_P(zval) php_orng_XorShift128Plus_from_obj(Z_OBJ_P(zval))
+# define Z_ORNG_XorShift128Plus_P(zval) php_orng_XorShift128Plus_from_obj(Z_OBJ_P(zval))
 
 # define PHP_ORNG_VERSION "0.0.0"
 
