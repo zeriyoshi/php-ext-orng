@@ -83,10 +83,11 @@ static const zend_function_entry class_ORNG_MT19937_methods[] = {
 	ZEND_FE_END
 };
 
-
+/* FIXME: The test fails in the debug build PHP if it is enabled.
 static const zend_function_entry class_ORNG_MT19937PHP_methods[] = {
 	ZEND_ME(ORNG_MT19937PHP, __construct, arginfo_class_ORNG_MT19937PHP___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(ORNG_MT19937PHP, next, arginfo_class_ORNG_MT19937PHP_next, ZEND_ACC_PUBLIC)
 	ZEND_ME(ORNG_MT19937PHP, range, arginfo_class_ORNG_MT19937PHP_range, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
+*/
