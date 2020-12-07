@@ -11,8 +11,8 @@ if (!extension_loaded('orng')) {
 const SEED = 50;
 
 $classes = [
-    \ORNG\XorShift128Plus::class,
     \ORNG\GLibCRand::class,
+    \ORNG\XorShift128Plus::class,
     \ORNG\MT19937::class,
     \ORNG\MT19937PHP::class,
 ];
@@ -27,13 +27,12 @@ foreach ($classes as $class) {
         $next = $origin->next();
         foreach ($children as $child) {
             if ($child->next() !== $next) {
-                echo "NG, polltion detected in ${class} (count: ${i})";
-                return;
+                die("NG, polltion detected in ${class} (count: ${i})");
             }
         }
     }
 }
-echo "OK, pollution is NOT detected.";
+die('OK, pollution is NOT detected.');
 ?>
 --EXPECT--
 OK, pollution is NOT detected.

@@ -11,8 +11,8 @@ if (!extension_loaded('orng')) {
 const SEED = 50;
 
 $classes = [
-    \ORNG\XorShift128Plus::class,
     \ORNG\GLibCRand::class,
+    \ORNG\XorShift128Plus::class,
     \ORNG\MT19937::class,
     \ORNG\MT19937PHP::class,
 ];
@@ -20,11 +20,10 @@ $classes = [
 foreach ($classes as $class) {
     $object = new $class(SEED);
     if (! $object instanceof \Orng\RNGInterface) {
-        echo "NG, ${class} has not implemented \\ORNG\\RNGInterface.";
-        return;
+        die("NG, ${class} has not implemented \\ORNG\\RNGInterface.");
     }
 }
-echo "OK, inheritance is corrected.";
+die('OK, inheritance is corrected.');
 ?>
 --EXPECT--
 OK, inheritance is corrected.
