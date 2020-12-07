@@ -22,8 +22,8 @@
 
 #include "php.h"
 #include "ext/standard/info.h"
+#include "compat.h"
 #include "php_orng.h"
-#include "arginfo_compat.h"
 #include "orng_arginfo.h"
 
 /* For compatibility with older PHP versions */
@@ -118,6 +118,10 @@ PHP_METHOD(ORNG_GLibCRand, range)
 		Z_PARAM_LONG(max)
 	ZEND_PARSE_PARAMETERS_END();
 
+	if (UNEXPECTED(max < min)) {
+		COMPAT_RETURN_ERROR_OR_THROW_MAX_SMALLER_THAN_MIN()
+	}
+
 	php_orng_GLibCRand_obj *obj = Z_ORNG_GLibCRand_P(getThis());
 
 	n = php_orng_GLibCRand_next(obj);
@@ -205,6 +209,10 @@ PHP_METHOD(ORNG_XorShift128Plus, range)
 		Z_PARAM_LONG(min)
 		Z_PARAM_LONG(max)
 	ZEND_PARSE_PARAMETERS_END();
+
+	if (UNEXPECTED(max < min)) {
+		COMPAT_RETURN_ERROR_OR_THROW_MAX_SMALLER_THAN_MIN()
+	}
 
 	php_orng_XorShift128Plus_obj *obj = Z_ORNG_XorShift128Plus_P(getThis());
 
@@ -427,6 +435,10 @@ PHP_METHOD(ORNG_MT19937, range)
 		Z_PARAM_LONG(min)
 		Z_PARAM_LONG(max)
 	ZEND_PARSE_PARAMETERS_END();
+
+	if (UNEXPECTED(max < min)) {
+		COMPAT_RETURN_ERROR_OR_THROW_MAX_SMALLER_THAN_MIN()
+	}
 
 	php_orng_MT19937_obj *obj = Z_ORNG_MT19937_P(getThis());
 
