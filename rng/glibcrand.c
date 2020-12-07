@@ -37,41 +37,41 @@ static zend_object_handlers orng_object_handlers_ORNG_GLibCRand;
 
 static zend_object *orng_ORNG_GLibCRand_new(zend_class_entry *ce)
 {
-    orng_ORNG_GLibCRand_obj *obj = (orng_ORNG_GLibCRand_obj*)ecalloc(1, sizeof(orng_ORNG_GLibCRand_obj) + zend_object_properties_size(ce));
-    zend_object_std_init(&obj->std, ce);
-    object_properties_init(&obj->std, ce);
-    obj->std.handlers = &orng_object_handlers_ORNG_GLibCRand;
-    return &obj->std;
+	orng_ORNG_GLibCRand_obj *obj = (orng_ORNG_GLibCRand_obj*)ecalloc(1, sizeof(orng_ORNG_GLibCRand_obj) + zend_object_properties_size(ce));
+	zend_object_std_init(&obj->std, ce);
+	object_properties_init(&obj->std, ce);
+	obj->std.handlers = &orng_object_handlers_ORNG_GLibCRand;
+	return &obj->std;
 }
 
 PHPAPI zend_long orng_ORNG_GLibCRand_next(orng_ORNG_GLibCRand_obj *obj)
 {
-    zend_long r;
+	zend_long r;
 
-    unsigned int x = obj->r[obj->next % 344] = obj->r[(obj->next + 313) % 344] + obj->r[(obj->next + 341) % 344];
-    obj->next = (obj->next + 1) % 344;
-    r = (x >> 1);
+	unsigned int x = obj->r[obj->next % 344] = obj->r[(obj->next + 313) % 344] + obj->r[(obj->next + 341) % 344];
+	obj->next = (obj->next + 1) % 344;
+	r = (x >> 1);
 
-    return r;
+	return r;
 }
 
 /* {{{ \ORNG\GLibCRand::__construct(int $seed) */
 PHP_METHOD(ORNG_GLibCRand, __construct)
 {
-    zend_long seed;
-    int i;
+	zend_long seed;
+	int i;
 
 	ZEND_PARSE_PARAMETERS_START(1, 1)
 		Z_PARAM_LONG(seed);
 	ZEND_PARSE_PARAMETERS_END();
 
-    orng_ORNG_GLibCRand_obj *obj = Z_ORNG_ORNG_GLibCRand_P(getThis());
+	orng_ORNG_GLibCRand_obj *obj = Z_ORNG_ORNG_GLibCRand_P(getThis());
 
-    if (seed == 0) {
-        seed = 1;
-    }
+	if (seed == 0) {
+		seed = 1;
+	}
 
-    obj->r[0] = seed;
+	obj->r[0] = seed;
 	for (i = 1; i < 31; i++) {
 		obj->r[i] = (unsigned int)((16807 * (unsigned long) obj->r[i - 1]) % 2147483647);
 	}
@@ -81,7 +81,7 @@ PHP_METHOD(ORNG_GLibCRand, __construct)
 	for (i = 34; i < 344; i++) {
 		obj->r[i] = obj->r[i - 31] + obj->r[i - 3];
 	}
-    obj->next = 0;
+	obj->next = 0;
 }
 /* }}} */
 
@@ -96,7 +96,7 @@ PHP_METHOD(ORNG_GLibCRand, next)
 /* {{{ \ORNG\GLibCRand::range(int $min, int $max): int */
 PHP_METHOD(ORNG_GLibCRand, range)
 {
-    zend_long min, max, n;
+	zend_long min, max, n;
 
 	ZEND_PARSE_PARAMETERS_START(2, 2)
 		Z_PARAM_LONG(min)
@@ -107,25 +107,25 @@ PHP_METHOD(ORNG_GLibCRand, range)
 		ORNG_COMPAT_RETURN_ERROR_OR_THROW_MAX_SMALLER_THAN_MIN();
 	}
 
-    orng_ORNG_GLibCRand_obj *obj = Z_ORNG_ORNG_GLibCRand_P(getThis());
+	orng_ORNG_GLibCRand_obj *obj = Z_ORNG_ORNG_GLibCRand_P(getThis());
 
-    n = orng_ORNG_GLibCRand_next(obj);
-    n = min + (zend_long) ((double) ((double) max - min + 1.0) * (n / (2147483647 + 1.0)));
+	n = orng_ORNG_GLibCRand_next(obj);
+	n = min + (zend_long) ((double) ((double) max - min + 1.0) * (n / (2147483647 + 1.0)));
 
-    RETURN_LONG(n);
+	RETURN_LONG(n);
 }
 /* }}} */
 
 PHP_MINIT_FUNCTION(orng_rng_glibcrand)
 {
-    zend_class_entry ce;
-    INIT_CLASS_ENTRY(ce, ORNG_RNG_FQN(GLibCRand), class_ORNG_GLibCRand_methods);
-    orng_ce_ORNG_GLibCRand = zend_register_internal_class(&ce);
-    zend_class_implements(orng_ce_ORNG_GLibCRand, 1, orng_ce_ORNG_RNGInterface);
-    orng_ce_ORNG_GLibCRand->create_object = orng_ORNG_GLibCRand_new;
-    memcpy(&orng_object_handlers_ORNG_GLibCRand, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-    orng_object_handlers_ORNG_GLibCRand.offset = XtOffsetOf(orng_ORNG_GLibCRand_obj, std);
-    orng_object_handlers_ORNG_GLibCRand.clone_obj = NULL; //FIXME
+	zend_class_entry ce;
+	INIT_CLASS_ENTRY(ce, ORNG_RNG_FQN(GLibCRand), class_ORNG_GLibCRand_methods);
+	orng_ce_ORNG_GLibCRand = zend_register_internal_class(&ce);
+	zend_class_implements(orng_ce_ORNG_GLibCRand, 1, orng_ce_ORNG_RNGInterface);
+	orng_ce_ORNG_GLibCRand->create_object = orng_ORNG_GLibCRand_new;
+	memcpy(&orng_object_handlers_ORNG_GLibCRand, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+	orng_object_handlers_ORNG_GLibCRand.offset = XtOffsetOf(orng_ORNG_GLibCRand_obj, std);
+	orng_object_handlers_ORNG_GLibCRand.clone_obj = NULL; //FIXME
 
-    return SUCCESS;
+	return SUCCESS;
 }

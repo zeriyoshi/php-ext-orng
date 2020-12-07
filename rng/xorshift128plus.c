@@ -46,11 +46,11 @@ static uint64_t orng_ORNG_XorShift128Plus_splitmix64_next(uint64_t *seed)
 
 static zend_object *orng_ORNG_XorShift128Plus_new(zend_class_entry *ce)
 {
-    orng_ORNG_XorShift128Plus_obj *obj = (orng_ORNG_XorShift128Plus_obj*)ecalloc(1, sizeof(orng_ORNG_XorShift128Plus_obj) + zend_object_properties_size(ce));
-    zend_object_std_init(&obj->std, ce);
-    object_properties_init(&obj->std, ce);
-    obj->std.handlers = &orng_object_handlers_ORNG_XorShift128Plus;
-    return &obj->std;
+	orng_ORNG_XorShift128Plus_obj *obj = (orng_ORNG_XorShift128Plus_obj*)ecalloc(1, sizeof(orng_ORNG_XorShift128Plus_obj) + zend_object_properties_size(ce));
+	zend_object_std_init(&obj->std, ce);
+	object_properties_init(&obj->std, ce);
+	obj->std.handlers = &orng_object_handlers_ORNG_XorShift128Plus;
+	return &obj->std;
 }
 
 static uint64_t orng_ORNG_XorShift128Plus_next64(orng_ORNG_XorShift128Plus_obj *obj)
@@ -74,27 +74,27 @@ PHPAPI zend_long orng_ORNG_XorShift128Plus_next(orng_ORNG_XorShift128Plus_obj *o
 
 static uint32_t orng_ORNG_XorShift128Plus_rand_range32(orng_ORNG_XorShift128Plus_obj *obj, uint32_t umax)
 {
-    uint32_t r, l;
+	uint32_t r, l;
 
-    r = orng_ORNG_XorShift128Plus_next(obj);
+	r = orng_ORNG_XorShift128Plus_next(obj);
 
-    if (UNEXPECTED(umax == UINT32_MAX)) {
-        return r;
-    }
+	if (UNEXPECTED(umax == UINT32_MAX)) {
+		return r;
+	}
 
-    umax++;
+	umax++;
 
 	if ((umax & (umax - 1)) == 0) {
 		return r & (umax - 1);
 	}
 
-    l = UINT32_MAX - (UINT32_MAX % umax) - 1;
+	l = UINT32_MAX - (UINT32_MAX % umax) - 1;
 
 	while (UNEXPECTED(r > l)) {
 		r = orng_ORNG_XorShift128Plus_next(obj);
 	}
 
-    return r % umax;
+	return r % umax;
 }
 
 static uint64_t orng_ORNG_XorShift128Plus_rand_range64(orng_ORNG_XorShift128Plus_obj *obj, uint32_t umax)
@@ -125,18 +125,18 @@ static uint64_t orng_ORNG_XorShift128Plus_rand_range64(orng_ORNG_XorShift128Plus
 /* {{{ \ORNG\XorShift128Plus::__construct(int $seed) */
 PHP_METHOD(ORNG_XorShift128Plus, __construct)
 {
-    zend_long seed;
-    int i;
+	zend_long seed;
+	int i;
 
 	ZEND_PARSE_PARAMETERS_START(1, 1)
 		Z_PARAM_LONG(seed);
 	ZEND_PARSE_PARAMETERS_END();
 
-    orng_ORNG_XorShift128Plus_obj *obj = Z_ORNG_ORNG_XorShift128Plus_P(getThis());
+	orng_ORNG_XorShift128Plus_obj *obj = Z_ORNG_ORNG_XorShift128Plus_P(getThis());
 
-    if (seed == 0) {
-        seed = 1;
-    }
+	if (seed == 0) {
+		seed = 1;
+	}
 
 	obj->s[0] = orng_ORNG_XorShift128Plus_splitmix64_next(&seed);
 	obj->s[1] = orng_ORNG_XorShift128Plus_splitmix64_next(&seed);
@@ -182,14 +182,14 @@ PHP_METHOD(ORNG_XorShift128Plus, range)
 
 PHP_MINIT_FUNCTION(orng_rng_xorshift128plus)
 {
-    zend_class_entry ce;
-    INIT_CLASS_ENTRY(ce, ORNG_RNG_FQN(XorShift128Plus), class_ORNG_XorShift128Plus_methods);
-    orng_ce_ORNG_XorShift128Plus = zend_register_internal_class(&ce);
-    zend_class_implements(orng_ce_ORNG_XorShift128Plus, 1, orng_ce_ORNG_RNGInterface);
-    orng_ce_ORNG_XorShift128Plus->create_object = orng_ORNG_XorShift128Plus_new;
-    memcpy(&orng_object_handlers_ORNG_XorShift128Plus, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-    orng_object_handlers_ORNG_XorShift128Plus.offset = XtOffsetOf(orng_ORNG_XorShift128Plus_obj, std);
-    orng_object_handlers_ORNG_XorShift128Plus.clone_obj = NULL; //FIXME
+	zend_class_entry ce;
+	INIT_CLASS_ENTRY(ce, ORNG_RNG_FQN(XorShift128Plus), class_ORNG_XorShift128Plus_methods);
+	orng_ce_ORNG_XorShift128Plus = zend_register_internal_class(&ce);
+	zend_class_implements(orng_ce_ORNG_XorShift128Plus, 1, orng_ce_ORNG_RNGInterface);
+	orng_ce_ORNG_XorShift128Plus->create_object = orng_ORNG_XorShift128Plus_new;
+	memcpy(&orng_object_handlers_ORNG_XorShift128Plus, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+	orng_object_handlers_ORNG_XorShift128Plus.offset = XtOffsetOf(orng_ORNG_XorShift128Plus_obj, std);
+	orng_object_handlers_ORNG_XorShift128Plus.clone_obj = NULL; //FIXME
 
-    return SUCCESS;
+	return SUCCESS;
 }

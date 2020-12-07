@@ -33,9 +33,9 @@ PHPAPI zend_class_entry *orng_ce_ORNG_RNGInterface;
 
 PHP_MINIT_FUNCTION(orng_rng_rnginterface)
 {
-    zend_class_entry ce;
-    INIT_CLASS_ENTRY(ce, ORNG_RNG_FQN(RNGInterface), class_ORNG_RNGInterface_methods);
-    orng_ce_ORNG_RNGInterface = zend_register_internal_interface(&ce);
+	zend_class_entry ce;
+	INIT_CLASS_ENTRY(ce, ORNG_RNG_FQN(RNGInterface), class_ORNG_RNGInterface_methods);
+	orng_ce_ORNG_RNGInterface = zend_register_internal_interface(&ce);
 
-    return SUCCESS;
+	return SUCCESS;
 }

@@ -39,22 +39,22 @@ static zend_object_handlers orng_object_handlers_ORNG_MT19937;
 
 static zend_object *orng_ORNG_MT19937_new(zend_class_entry *ce)
 {
-    orng_ORNG_MT19937_obj *obj = (orng_ORNG_MT19937_obj*)ecalloc(1, sizeof(orng_ORNG_MT19937_obj) + zend_object_properties_size(ce));
-    zend_object_std_init(&obj->std, ce);
-    object_properties_init(&obj->std, ce);
-    obj->std.handlers = &orng_object_handlers_ORNG_MT19937;
+	orng_ORNG_MT19937_obj *obj = (orng_ORNG_MT19937_obj*)ecalloc(1, sizeof(orng_ORNG_MT19937_obj) + zend_object_properties_size(ce));
+	zend_object_std_init(&obj->std, ce);
+	object_properties_init(&obj->std, ce);
+	obj->std.handlers = &orng_object_handlers_ORNG_MT19937;
 	obj->mode = ORNG_RNG_MT19937_MODE_NORMAL;
-    return &obj->std;
+	return &obj->std;
 }
 
 static zend_object *orng_ORNG_MT19937PHP_new(zend_class_entry *ce)
 {
-    orng_ORNG_MT19937_obj *obj = (orng_ORNG_MT19937_obj*)ecalloc(1, sizeof(orng_ORNG_MT19937_obj) + zend_object_properties_size(ce));
-    zend_object_std_init(&obj->std, ce);
-    object_properties_init(&obj->std, ce);
-    obj->std.handlers = &orng_object_handlers_ORNG_MT19937;
+	orng_ORNG_MT19937_obj *obj = (orng_ORNG_MT19937_obj*)ecalloc(1, sizeof(orng_ORNG_MT19937_obj) + zend_object_properties_size(ce));
+	zend_object_std_init(&obj->std, ce);
+	object_properties_init(&obj->std, ce);
+	obj->std.handlers = &orng_object_handlers_ORNG_MT19937;
 	obj->mode = ORNG_RNG_MT19937_MODE_PHP;
-    return &obj->std;
+	return &obj->std;
 }
 
 static inline void orng_ORNG_MT19937_initialize(uint32_t seed, uint32_t *state)
@@ -112,27 +112,27 @@ PHPAPI zend_long orng_ORNG_MT19937_next(orng_ORNG_MT19937_obj *obj)
 
 static uint32_t orng_ORNG_MT19937_rand_range32(orng_ORNG_MT19937_obj *obj, uint32_t umax)
 {
-    uint32_t r, l;
+	uint32_t r, l;
 
-    r = orng_ORNG_MT19937_next(obj);
+	r = orng_ORNG_MT19937_next(obj);
 
-    if (UNEXPECTED(umax == UINT32_MAX)) {
-        return r;
-    }
+	if (UNEXPECTED(umax == UINT32_MAX)) {
+		return r;
+	}
 
-    umax++;
+	umax++;
 
 	if ((umax & (umax - 1)) == 0) {
 		return r & (umax - 1);
 	}
 
-    l = UINT32_MAX - (UINT32_MAX % umax) - 1;
+	l = UINT32_MAX - (UINT32_MAX % umax) - 1;
 
 	while (UNEXPECTED(r > l)) {
 		r = orng_ORNG_MT19937_next(obj);
 	}
 
-    return r % umax;
+	return r % umax;
 }
 
 static uint64_t orng_ORNG_MT19937_rand_range64(orng_ORNG_MT19937_obj *obj, uint32_t umax)
@@ -165,14 +165,14 @@ static uint64_t orng_ORNG_MT19937_rand_range64(orng_ORNG_MT19937_obj *obj, uint3
 /* {{{ \ORNG\MT19937::__construct(int $seed) */
 PHP_METHOD(ORNG_MT19937, __construct)
 {
-    zend_long seed;
-    int i;
+	zend_long seed;
+	int i;
 
 	ZEND_PARSE_PARAMETERS_START(1, 1)
 		Z_PARAM_LONG(seed);
 	ZEND_PARSE_PARAMETERS_END();
 
-    orng_ORNG_MT19937_obj *obj = Z_ORNG_ORNG_MT19937_P(getThis());
+	orng_ORNG_MT19937_obj *obj = Z_ORNG_ORNG_MT19937_P(getThis());
 	orng_ORNG_MT19937_initialize(seed, obj->state);
 }
 /* }}} */
@@ -216,19 +216,19 @@ PHP_METHOD(ORNG_MT19937, range)
 
 PHP_MINIT_FUNCTION(orng_rng_mt19937)
 {
-    zend_class_entry ce, ce2;
-    INIT_CLASS_ENTRY(ce, ORNG_RNG_FQN(MT19937), class_ORNG_MT19937_methods);
-    orng_ce_ORNG_MT19937 = zend_register_internal_class(&ce);
-    zend_class_implements(orng_ce_ORNG_MT19937, 1, orng_ce_ORNG_RNGInterface);
-    orng_ce_ORNG_MT19937->create_object = orng_ORNG_MT19937_new;
-    memcpy(&orng_object_handlers_ORNG_MT19937, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-    orng_object_handlers_ORNG_MT19937.offset = XtOffsetOf(orng_ORNG_MT19937_obj, std);
-    orng_object_handlers_ORNG_MT19937.clone_obj = NULL; //FIXME
+	zend_class_entry ce, ce2;
+	INIT_CLASS_ENTRY(ce, ORNG_RNG_FQN(MT19937), class_ORNG_MT19937_methods);
+	orng_ce_ORNG_MT19937 = zend_register_internal_class(&ce);
+	zend_class_implements(orng_ce_ORNG_MT19937, 1, orng_ce_ORNG_RNGInterface);
+	orng_ce_ORNG_MT19937->create_object = orng_ORNG_MT19937_new;
+	memcpy(&orng_object_handlers_ORNG_MT19937, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+	orng_object_handlers_ORNG_MT19937.offset = XtOffsetOf(orng_ORNG_MT19937_obj, std);
+	orng_object_handlers_ORNG_MT19937.clone_obj = NULL; //FIXME
 
-    INIT_CLASS_ENTRY(ce2, ORNG_RNG_FQN(MT19937PHP), class_ORNG_MT19937_methods);
-    orng_ce_ORNG_MT19937PHP = zend_register_internal_class(&ce2);
-    zend_class_implements(orng_ce_ORNG_MT19937PHP, 1, orng_ce_ORNG_RNGInterface);
-    orng_ce_ORNG_MT19937PHP->create_object = orng_ORNG_MT19937PHP_new;
+	INIT_CLASS_ENTRY(ce2, ORNG_RNG_FQN(MT19937PHP), class_ORNG_MT19937_methods);
+	orng_ce_ORNG_MT19937PHP = zend_register_internal_class(&ce2);
+	zend_class_implements(orng_ce_ORNG_MT19937PHP, 1, orng_ce_ORNG_RNGInterface);
+	orng_ce_ORNG_MT19937PHP->create_object = orng_ORNG_MT19937PHP_new;
 
-    return SUCCESS;
+	return SUCCESS;
 }
