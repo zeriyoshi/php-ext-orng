@@ -17,24 +17,25 @@
   +----------------------------------------------------------------------+
 */
 
-#ifndef PHP_ORNG_H
-# define PHP_ORNG_H
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 
-# define ORNG_RNG_FQN(__cn) "ORNG\\"#__cn
+#include "php.h"
 
-extern zend_module_entry orng_module_entry;
-# define phpext_orng_ptr &orng_module_entry
+#include "../orng_compat.h"
+#include "../php_orng.h"
 
-# define PHP_ORNG_VERSION "0.0.1-dev"
+#include "rnginterface.h"
+#include "rnginterface_arginfo.h"
 
-PHP_MINIT_FUNCTION(orng);
-PHP_MSHUTDOWN_FUNCTION(orng);
-PHP_RINIT_FUNCTION(orng);
-PHP_RSHUTDOWN_FUNCTION(orng);
-PHP_MINFO_FUNCTION(orng);
+PHPAPI zend_class_entry *orng_ce_ORNG_RNGInterface;
 
-# if defined(ZTS) && defined(COMPILE_DL_ORNG)
-ZEND_TSRMLS_CACHE_EXTERN()
-# endif
+PHP_MINIT_FUNCTION(orng_rng_rnginterface)
+{
+    zend_class_entry ce;
+    INIT_CLASS_ENTRY(ce, ORNG_RNG_FQN(RNGInterface), class_ORNG_RNGInterface_methods);
+    orng_ce_ORNG_RNGInterface = zend_register_internal_interface(&ce);
 
-#endif	/* PHP_ORNG_H */
+    return SUCCESS;
+}

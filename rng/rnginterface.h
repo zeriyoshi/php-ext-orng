@@ -17,24 +17,13 @@
   +----------------------------------------------------------------------+
 */
 
-#ifndef PHP_ORNG_H
-# define PHP_ORNG_H
+#ifndef ORNG_RNG_RNGINTERFACE_H
+# define ORNG_RNG_RNGINTERFACE_H
 
-# define ORNG_RNG_FQN(__cn) "ORNG\\"#__cn
+# include "php.h"
 
-extern zend_module_entry orng_module_entry;
-# define phpext_orng_ptr &orng_module_entry
+extern PHPAPI zend_class_entry *orng_ce_ORNG_RNGInterface;
 
-# define PHP_ORNG_VERSION "0.0.1-dev"
+PHP_MINIT_FUNCTION(orng_rng_rnginterface);
 
-PHP_MINIT_FUNCTION(orng);
-PHP_MSHUTDOWN_FUNCTION(orng);
-PHP_RINIT_FUNCTION(orng);
-PHP_RSHUTDOWN_FUNCTION(orng);
-PHP_MINFO_FUNCTION(orng);
-
-# if defined(ZTS) && defined(COMPILE_DL_ORNG)
-ZEND_TSRMLS_CACHE_EXTERN()
-# endif
-
-#endif	/* PHP_ORNG_H */
+#endif

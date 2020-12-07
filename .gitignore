@@ -1,6 +1,7 @@
 *.lo
 *.la
 .libs
+rng/.libs
 acinclude.m4
 aclocal.m4
 autom4te.cache
@@ -27,7 +28,6 @@ missing
 mkinstalldirs
 modules
 run-tests.php
-tmp-php.ini
 tests/*/*.diff
 tests/*/*.out
 tests/*/*.php
