@@ -3,5 +3,12 @@ ARG_ENABLE('orng', 'orng support', 'no');
 if (PHP_ORNG != 'no') {
 	AC_DEFINE('HAVE_ORNG', 1, 'orng support enabled');
 
-	EXTENSION('orng', 'orng.c', null, '/DZEND_ENABLE_STATIC_TSRMLS_CACHE=1');
+	EXTENSION('orng', 'php_orng.c', null, '/DZEND_ENABLE_STATIC_TSRMLS_CACHE=1');
+
+	ADD_SOURCES(configure_module_dirname + "/rng", "\
+		rnginterface.c \
+		glibcrand.c \
+		xorshift128plus.c \
+		mt19937.c \
+		", "orng");
 }

@@ -17,24 +17,29 @@
   +----------------------------------------------------------------------+
 */
 
-#ifndef PHP_ORNG_H
-# define PHP_ORNG_H
+#ifndef ORNG_RNG_GLIBCRAND_H
+# define ORNG_RNG_GLIBCRAND_H
 
-# define ORNG_RNG_FQN(__cn) "ORNG\\"#__cn
+# include "php.h"
 
-extern zend_module_entry orng_module_entry;
-# define phpext_orng_ptr &orng_module_entry
+extern PHPAPI zend_class_entry *orng_ce_ORNG_GLibCRand;
 
-# define PHP_ORNG_VERSION "0.0.1-dev"
+typedef struct _orng_ORNG_GLibCRand_obj {
+	zend_long r[344];
+	int next;
+	zend_object std;
+} orng_ORNG_GLibCRand_obj;
 
-PHP_MINIT_FUNCTION(orng);
-PHP_MSHUTDOWN_FUNCTION(orng);
-PHP_RINIT_FUNCTION(orng);
-PHP_RSHUTDOWN_FUNCTION(orng);
-PHP_MINFO_FUNCTION(orng);
+static inline orng_ORNG_GLibCRand_obj *orng_ORNG_GLibCRand_from_obj(zend_object *obj) {
+	return (orng_ORNG_GLibCRand_obj*)((char*)(obj) - XtOffsetOf(orng_ORNG_GLibCRand_obj, std));
+}
 
-# if defined(ZTS) && defined(COMPILE_DL_ORNG)
-ZEND_TSRMLS_CACHE_EXTERN()
-# endif
+# define Z_ORNG_ORNG_GLibCRand_P(zval) orng_ORNG_GLibCRand_from_obj(Z_OBJ_P(zval))
 
-#endif	/* PHP_ORNG_H */
+PHP_METHOD(ORNG_GLibCRand, __construct);
+PHP_METHOD(ORNG_GLibCRand, next);
+PHP_METHOD(ORNG_GLibCRand, range);
+
+PHP_MINIT_FUNCTION(orng_rng_glibcrand);
+
+#endif

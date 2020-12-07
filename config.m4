@@ -90,5 +90,12 @@ if test "$PHP_ORNG" != "no"; then
   dnl In case of no dependencies
   AC_DEFINE(HAVE_ORNG, 1, [ Have orng support ])
 
-  PHP_NEW_EXTENSION(orng, orng.c, $ext_shared)
+  PHP_NEW_EXTENSION(orng, \
+    php_orng.c \
+      rng/rnginterface.c \
+      rng/glibcrand.c \
+      rng/xorshift128plus.c \
+      rng/mt19937.c \
+  ,$ext_shared)
+  PHP_ADD_BUILD_DIR($ext_builddir/rng)
 fi

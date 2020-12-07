@@ -17,24 +17,29 @@
   +----------------------------------------------------------------------+
 */
 
-#ifndef PHP_ORNG_H
-# define PHP_ORNG_H
+#ifndef ORNG_COMPAT
+# define ORNG_COMPAT
 
-# define ORNG_RNG_FQN(__cn) "ORNG\\"#__cn
+# include "php.h"
 
-extern zend_module_entry orng_module_entry;
-# define phpext_orng_ptr &orng_module_entry
-
-# define PHP_ORNG_VERSION "0.0.1-dev"
-
-PHP_MINIT_FUNCTION(orng);
-PHP_MSHUTDOWN_FUNCTION(orng);
-PHP_RINIT_FUNCTION(orng);
-PHP_RSHUTDOWN_FUNCTION(orng);
-PHP_MINFO_FUNCTION(orng);
-
-# if defined(ZTS) && defined(COMPILE_DL_ORNG)
-ZEND_TSRMLS_CACHE_EXTERN()
+/* For compatibility with older PHP versions */
+# ifndef ZEND_PARSE_PARAMETERS_NONE
+#  define ZEND_PARSE_PARAMETERS_NONE() \
+	ZEND_PARSE_PARAMETERS_START(0, 0) \
+	ZEND_PARSE_PARAMETERS_END()
 # endif
 
-#endif	/* PHP_ORNG_H */
+# if PHP_VERSION_ID >= 80000
+#  define ORNG_COMPAT_RETURN_ERROR_OR_THROW_MAX_SMALLER_THAN_MIN() \
+	zend_argument_value_error(2, "must be greater than or equal to argument #1 ($min)"); \
+	RETURN_THROWS();
+# else
+#  define ORNG_COMPAT_RETURN_ERROR_OR_THROW_MAX_SMALLER_THAN_MIN() \
+	php_error_docref(NULL, E_WARNING, "max(" ZEND_LONG_FMT ") is smaller than min(" ZEND_LONG_FMT ")", max, min); \
+	RETURN_FALSE;
+#  ifndef ZEND_ABSTRACT_ME_WITH_FLAGS
+#   define ZEND_ABSTRACT_ME_WITH_FLAGS(classname, name, arg_info, flags) ZEND_RAW_FENTRY(#name, NULL, arg_info, flags)
+#  endif
+# endif
+
+#endif
