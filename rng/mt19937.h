@@ -25,20 +25,6 @@
 extern PHPAPI zend_class_entry *orng_ce_ORNG_MT19937;
 extern PHPAPI zend_class_entry *orng_ce_ORNG_MT19937PHP;
 
-typedef struct _orng_ORNG_MT19937_obj {
-	uint32_t state[624+1];
-	uint32_t *next;
-	int left;
-	zend_long mode;
-	zend_object std;
-} orng_ORNG_MT19937_obj;
-
-static inline orng_ORNG_MT19937_obj *orng_ORNG_MT19937_from_obj(zend_object *obj) {
-	return (orng_ORNG_MT19937_obj*)((char*)(obj) - XtOffsetOf(orng_ORNG_MT19937_obj, std));
-}
-
-# define Z_ORNG_ORNG_MT19937_P(zval) orng_ORNG_MT19937_from_obj(Z_OBJ_P(zval))
-
 # define ORNG_RNG_MT19937_MT_RAND_MAX ((zend_long) (0x7FFFFFFF))
 
 # define ORNG_RNG_MT19937_RAND_RANGE_BADSCALING(__n, __min, __max, __tmax) \
@@ -56,6 +42,20 @@ static inline orng_ORNG_MT19937_obj *orng_ORNG_MT19937_from_obj(zend_object *obj
 
 # define ORNG_RNG_MT19937_twist(m,u,v)     (m ^ (ORNG_RNG_MT19937_MixBits(u,v)>>1) ^ ((uint32_t)(-(int32_t)(ORNG_RNG_MT19937_loBit(v))) & 0x9908b0dfU))
 # define ORNG_RNG_MT19937_twist_php(m,u,v) (m ^ (ORNG_RNG_MT19937_MixBits(u,v)>>1) ^ ((uint32_t)(-(int32_t)(ORNG_RNG_MT19937_loBit(u))) & 0x9908b0dfU))
+
+typedef struct _orng_ORNG_MT19937_obj {
+	uint32_t state[ORNG_RNG_MT19937_N + 1];
+	uint32_t *next;
+	int left;
+	zend_long mode;
+	zend_object std;
+} orng_ORNG_MT19937_obj;
+
+static inline orng_ORNG_MT19937_obj *orng_ORNG_MT19937_from_obj(zend_object *obj) {
+	return (orng_ORNG_MT19937_obj*)((char*)(obj) - XtOffsetOf(orng_ORNG_MT19937_obj, std));
+}
+
+# define Z_ORNG_ORNG_MT19937_P(zval) orng_ORNG_MT19937_from_obj(Z_OBJ_P(zval))
 
 PHP_METHOD(ORNG_MT19937, __construct);
 PHP_METHOD(ORNG_MT19937, next);

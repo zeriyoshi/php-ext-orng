@@ -41,7 +41,7 @@ static uint64_t orng_ORNG_XorShift128Plus_splitmix64_next(uint64_t *seed)
 	r = (*seed += 0x9e3779b97f4a7c15);
 	r = (r ^ (r >> 30)) * 0xbf58476d1ce4e5b9;
 	r = (r ^ (r >> 27)) * 0x94d049bb133111eb;
-	return r ^ (r >> 31);
+	return (zend_long) (r ^ (r >> 31));
 }
 
 static zend_object *orng_ORNG_XorShift128Plus_new(zend_class_entry *ce)
@@ -51,6 +51,21 @@ static zend_object *orng_ORNG_XorShift128Plus_new(zend_class_entry *ce)
 	object_properties_init(&obj->std, ce);
 	obj->std.handlers = &orng_object_handlers_ORNG_XorShift128Plus;
 	return &obj->std;
+}
+
+ORNG_COMPAT_RNG_CLONE_FUNCTION(XorShift128Plus)
+{
+	zend_object *old_obj = ORNG_COMPAT_RNG_CLONE_GET_OBJ();
+	zend_object *new_obj = orng_ORNG_XorShift128Plus_new(old_obj->ce);
+
+	zend_objects_clone_members(new_obj, old_obj);
+
+	orng_ORNG_XorShift128Plus_obj *old = orng_ORNG_XorShift128Plus_from_obj(old_obj);
+	orng_ORNG_XorShift128Plus_obj *new = orng_ORNG_XorShift128Plus_from_obj(new_obj);
+
+	memcpy(new->s, old->s, sizeof(old->s));
+
+	return new_obj;
 }
 
 static uint64_t orng_ORNG_XorShift128Plus_next64(orng_ORNG_XorShift128Plus_obj *obj)
@@ -189,7 +204,7 @@ PHP_MINIT_FUNCTION(orng_rng_xorshift128plus)
 	orng_ce_ORNG_XorShift128Plus->create_object = orng_ORNG_XorShift128Plus_new;
 	memcpy(&orng_object_handlers_ORNG_XorShift128Plus, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 	orng_object_handlers_ORNG_XorShift128Plus.offset = XtOffsetOf(orng_ORNG_XorShift128Plus_obj, std);
-	orng_object_handlers_ORNG_XorShift128Plus.clone_obj = NULL; //FIXME
+	orng_object_handlers_ORNG_XorShift128Plus.clone_obj = ORNG_COMPAT_RNG_CLONE(XorShift128Plus);
 
 	return SUCCESS;
 }

@@ -44,6 +44,22 @@ static zend_object *orng_ORNG_GLibCRand_new(zend_class_entry *ce)
 	return &obj->std;
 }
 
+ORNG_COMPAT_RNG_CLONE_FUNCTION(GLibCRand)
+{
+	zend_object *old_obj = ORNG_COMPAT_RNG_CLONE_GET_OBJ();
+	zend_object *new_obj = orng_ORNG_GLibCRand_new(old_obj->ce);
+
+	zend_objects_clone_members(new_obj, old_obj);
+
+	orng_ORNG_GLibCRand_obj *old = orng_ORNG_GLibCRand_from_obj(old_obj);
+	orng_ORNG_GLibCRand_obj *new = orng_ORNG_GLibCRand_from_obj(new_obj);
+
+	memcpy(new->r, old->r, sizeof(old->r));
+	new->next = old->next;
+
+	return new_obj;
+}
+
 PHPAPI zend_long orng_ORNG_GLibCRand_next(orng_ORNG_GLibCRand_obj *obj)
 {
 	zend_long r;
@@ -125,7 +141,7 @@ PHP_MINIT_FUNCTION(orng_rng_glibcrand)
 	orng_ce_ORNG_GLibCRand->create_object = orng_ORNG_GLibCRand_new;
 	memcpy(&orng_object_handlers_ORNG_GLibCRand, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 	orng_object_handlers_ORNG_GLibCRand.offset = XtOffsetOf(orng_ORNG_GLibCRand_obj, std);
-	orng_object_handlers_ORNG_GLibCRand.clone_obj = NULL; //FIXME
+	orng_object_handlers_ORNG_GLibCRand.clone_obj = ORNG_COMPAT_RNG_CLONE(GLibCRand);
 
 	return SUCCESS;
 }
