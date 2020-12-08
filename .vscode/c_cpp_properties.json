@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "name": "macos_catalina",
+            "intelliSenseMode": "gcc-x64",
+            "includePath": [
+                "/usr/local/include/php",
+                "/usr/local/include/php/main",
+                "/usr/local/include/php/include",
+                "/usr/local/include/php/ext",
+                "/usr/local/include/php/Zend",
+                "/usr/local/include/php/TSRM",
+                "/Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk/usr/include"
+            ],
+            "cStandard": "c99"
+        }
+    ],
+    "version": 4
+}
