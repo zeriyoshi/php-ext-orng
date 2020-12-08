@@ -29,11 +29,19 @@
 	ZEND_PARSE_PARAMETERS_END()
 # endif
 
+# define ORNG_COMPAT_RNG_CLONE(__cn) orng_ORNG_clone_autodefined_##__cn
+
 # if PHP_VERSION_ID >= 80000
+#  define ORNG_COMPAT_RNG_CLONE_FUNCTION(__cn) \
+	static zend_object *orng_ORNG_clone_autodefined_##__cn(zend_object *__old)
+#  define ORNG_COMPAT_RNG_CLONE_GET_OBJ() __old
 #  define ORNG_COMPAT_RETURN_ERROR_OR_THROW_MAX_SMALLER_THAN_MIN() \
 	zend_argument_value_error(2, "must be greater than or equal to argument #1 ($min)"); \
 	RETURN_THROWS();
 # else
+#  define ORNG_COMPAT_RNG_CLONE_FUNCTION(__cn) \
+	static zend_object *orng_ORNG_clone_autodefined_##__cn(zval *__old)
+#  define ORNG_COMPAT_RNG_CLONE_GET_OBJ() Z_OBJ_P(__old)
 #  define ORNG_COMPAT_RETURN_ERROR_OR_THROW_MAX_SMALLER_THAN_MIN() \
 	php_error_docref(NULL, E_WARNING, "max(" ZEND_LONG_FMT ") is smaller than min(" ZEND_LONG_FMT ")", max, min); \
 	RETURN_FALSE;

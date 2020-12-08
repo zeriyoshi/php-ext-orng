@@ -57,6 +57,24 @@ static zend_object *orng_ORNG_MT19937PHP_new(zend_class_entry *ce)
 	return &obj->std;
 }
 
+ORNG_COMPAT_RNG_CLONE_FUNCTION(MT19937)
+{
+	zend_object *old_obj = ORNG_COMPAT_RNG_CLONE_GET_OBJ();
+	zend_object *new_obj = orng_ORNG_MT19937_new(old_obj->ce);
+
+	zend_objects_clone_members(new_obj, old_obj);
+
+	orng_ORNG_MT19937_obj *old = orng_ORNG_MT19937_from_obj(old_obj);
+	orng_ORNG_MT19937_obj *new = orng_ORNG_MT19937_from_obj(new_obj);
+
+	memcpy(new->state, old->state, sizeof(old->state));
+	new->next = old->next;
+	new->left = old->left;
+	new->mode = old->mode;
+
+	return new_obj;
+}
+
 static inline void orng_ORNG_MT19937_initialize(uint32_t seed, uint32_t *state)
 {
 	register uint32_t *s = state;
@@ -223,7 +241,7 @@ PHP_MINIT_FUNCTION(orng_rng_mt19937)
 	orng_ce_ORNG_MT19937->create_object = orng_ORNG_MT19937_new;
 	memcpy(&orng_object_handlers_ORNG_MT19937, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 	orng_object_handlers_ORNG_MT19937.offset = XtOffsetOf(orng_ORNG_MT19937_obj, std);
-	orng_object_handlers_ORNG_MT19937.clone_obj = NULL; //FIXME
+	orng_object_handlers_ORNG_MT19937.clone_obj = ORNG_COMPAT_RNG_CLONE(MT19937);
 
 	INIT_CLASS_ENTRY(ce2, ORNG_RNG_FQN(MT19937PHP), class_ORNG_MT19937_methods);
 	orng_ce_ORNG_MT19937PHP = zend_register_internal_class(&ce2);
