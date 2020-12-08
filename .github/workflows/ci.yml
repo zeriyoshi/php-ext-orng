@@ -1,7 +1,52 @@
 name: CI
 on: [push]
 jobs:
-  ci:
+  macOS:
+    runs-on: macos-10.15
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        branch: ["PHP-7.3", "PHP-7.4", "PHP-8.0", "master"]
+        ts: ["nts", "zts"]
+    steps:
+      - name: Setup PHP
+        run: |
+          pushd "/tmp"
+          case "${{ matrix.branch }}" in
+            "PHP-7.3") export BISON_PKG="bison@2.7" && export DISBLE_LIBXML_OPTION="--disable-libxml";;
+            *) export BISON_PKG="bison" && export DISBLE_LIBXML_OPTION="--without-libxml";;
+          esac
+          brew install "pkg-config" "autoconf" "re2c" "${BISON_PKG}"
+          git clone --depth=1 --branch="${{ matrix.branch }}" "https://github.com/php/php-src.git" "php-src"
+          cd "php-src"
+          ./buildconf --force
+          case "${{ matrix.ts }}" in
+            "nts") YACC="$(brew --prefix "${BISON_PKG}")/bin/bison" ./configure --without-pear --disable-cgi --without-sqlite3 --without-pdo-sqlite --disable-xml --disable-xmlreader --disable-xmlwriter --disable-simplexml --disable-dom ${DISBLE_LIBXML_OPTION} --without-iconv --enable-debug --enable-option-checking=fatal;;
+            "zts")
+              case "${{ matrix.branch }}" in
+                "PHP-7.3"|"PHP-7.4") YACC="$(brew --prefix "${BISON_PKG}")/bin/bison" ./configure --without-pear --disable-cgi --without-sqlite3 --without-pdo-sqlite --disable-xml --disable-xmlreader --disable-xmlwriter --disable-simplexml --disable-dom ${DISBLE_LIBXML_OPTION} --without-iconv --enable-debug --enable-maintainer-zts --enable-option-checking=fatal;;
+                *) YACC="$(brew --prefix "${BISON_PKG}")/bin/bison" ./configure --without-pear --disable-cgi --without-sqlite3 --without-pdo-sqlite --disable-xml --disable-xmlreader --disable-xmlwriter --disable-simplexml --disable-dom ${DISBLE_LIBXML_OPTION} --without-iconv --enable-debug --enable-zts --enable-option-checking=fatal;;
+              esac;;
+          esac
+          make -j4
+          sudo make install
+          popd
+      - name: Show PHP version
+        run: |
+          php --version
+      - name: Clone
+        uses: actions/checkout@master
+      - name: Build and Test
+        env:
+          NO_INTERACTION: "1"
+          REPORT_EXIT_STATUS: "1"
+          TEST_PHP_ARGS: "--show-diff"
+        run: |
+          phpize
+          ./configure
+          make
+          make test
+  Linux:
     runs-on: ubuntu-20.04
     if: contains(github.event.head_commit.message, '[CI skip]') == false
     timeout-minutes: 60
@@ -13,17 +58,21 @@ jobs:
       - name: Setup PHP
         run: |
           pushd "/tmp"
+          case "${{ matrix.branch }}" in
+            "PHP-7.3") export export DISBLE_LIBXML_OPTION="--disable-libxml";;
+            *) export DISBLE_LIBXML_OPTION="--without-libxml";;
+          esac
           sudo apt-get update
-          sudo apt-get install -y "git" "build-essential" "valgrind" "autoconf" "bison" "re2c" "libxml2-dev" "libsqlite3-dev" "pkg-config"
+          sudo apt-get install -y "git" "build-essential" "valgrind" "autoconf" "bison" "re2c" "pkg-config"
           git clone --depth=1 --branch="${{ matrix.branch }}" "https://github.com/php/php-src.git" "php-src"
           cd "php-src"
           ./buildconf --force
           case "${{ matrix.ts }}" in
-            "nts") ./configure --without-pear --disable-cgi --enable-debug --with-valgrind;;
+            "nts") ./configure --without-pear --disable-cgi --without-sqlite3 --without-pdo-sqlite --disable-xml --disable-xmlreader --disable-xmlwriter --disable-simplexml --disable-dom ${DISBLE_LIBXML_OPTION} --without-iconv --enable-debug --with-valgrind;;
             "zts")
               case "${{ matrix.branch }}" in
-                "PHP-7.3"|"PHP-7.4") ./configure --without-pear --disable-cgi --enable-debug --with-valgrind --enable-maintainer-zts;;
-                *) ./configure --without-pear --disable-cgi --enable-debug --with-valgrind --enable-zts;;
+                "PHP-7.3"|"PHP-7.4") ./configure --without-pear --disable-cgi --without-sqlite3 --without-pdo-sqlite --disable-xml --disable-xmlreader --disable-xmlwriter --disable-simplexml --disable-dom ${DISBLE_LIBXML_OPTION} --without-iconv --enable-debug --with-valgrind --enable-maintainer-zts;;
+                *) ./configure --without-pear --disable-cgi --without-sqlite3 --without-pdo-sqlite --disable-xml --disable-xmlreader --disable-xmlwriter --disable-simplexml --disable-dom ${DISBLE_LIBXML_OPTION} --without-iconv --enable-debug --with-valgrind --enable-zts;;
               esac;;
           esac
           make -j4
@@ -46,4 +95,3 @@ jobs:
           ./configure
           make
           make test
-
