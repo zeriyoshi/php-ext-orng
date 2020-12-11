@@ -17,23 +17,26 @@
   +----------------------------------------------------------------------+
 */
 
-#ifndef ORNG_RNG_XORSHIFT128PLUS_H
-# define ORNG_RNG_XORSHIFT128PLUS_H
+#ifndef ORNG_XORSHIFT128PLUS_H
+# define ORNG_XORSHIFT128PLUS_H
 
 # include "php.h"
 
-extern PHPAPI zend_class_entry *orng_ce_ORNG_XorShift128Plus;
+# include "../orng_util.h"
 
-typedef struct _orng_ORNG_XorShift128Plus_obj {
-	uint64_t s[2];
+extern PHPAPI zend_class_entry *ce_ORNG_XorShift128Plus;
+
+typedef struct _ORNG_XorShift128Plus_obj {
+  uint64_t s[2];
+  orng_rng_common *common;
 	zend_object std;
-} orng_ORNG_XorShift128Plus_obj;
+} ORNG_XorShift128Plus_obj;
 
-static inline orng_ORNG_XorShift128Plus_obj *orng_ORNG_XorShift128Plus_from_obj(zend_object *obj) {
-	return (orng_ORNG_XorShift128Plus_obj*)((char*)(obj) - XtOffsetOf(orng_ORNG_XorShift128Plus_obj, std));
+static inline ORNG_XorShift128Plus_obj *ORNG_XorShift128Plus_obj_from_zend_object(zend_object *obj) {
+	return (ORNG_XorShift128Plus_obj*)((char*)(obj) - XtOffsetOf(ORNG_XorShift128Plus_obj, std));
 }
 
-# define Z_ORNG_ORNG_XorShift128Plus_P(zval) orng_ORNG_XorShift128Plus_from_obj(Z_OBJ_P(zval))
+# define Z_XorShift128Plus_P(zval) ORNG_XorShift128Plus_obj_from_zend_object(Z_OBJ_P(zval))
 
 PHP_METHOD(ORNG_XorShift128Plus, __construct);
 PHP_METHOD(ORNG_XorShift128Plus, next);

@@ -23,6 +23,7 @@
 
 #include "php.h"
 
+#include "../orng_util.h"
 #include "../orng_compat.h"
 #include "../php_orng.h"
 
@@ -32,92 +33,56 @@
 #include "mt19937_arginfo.h"
 // Note: "mt19937php_arghinfo.h" is not required.
 
-PHPAPI zend_class_entry *orng_ce_ORNG_MT19937;
-PHPAPI zend_class_entry *orng_ce_ORNG_MT19937PHP;
+PHPAPI zend_class_entry *ce_ORNG_MT19937;
+PHPAPI zend_class_entry *ce_ORNG_MT19937PHP;
 
-static zend_object_handlers orng_object_handlers_ORNG_MT19937;
+static zend_object_handlers oh_MT19937;
 
-static zend_object *orng_ORNG_MT19937_new(zend_class_entry *ce)
-{
-	orng_ORNG_MT19937_obj *obj = (orng_ORNG_MT19937_obj*)ecalloc(1, sizeof(orng_ORNG_MT19937_obj) + zend_object_properties_size(ce));
-	zend_object_std_init(&obj->std, ce);
-	object_properties_init(&obj->std, ce);
-	obj->std.handlers = &orng_object_handlers_ORNG_MT19937;
-	obj->mode = ORNG_RNG_MT19937_MODE_NORMAL;
-	return &obj->std;
-}
-
-static zend_object *orng_ORNG_MT19937PHP_new(zend_class_entry *ce)
-{
-	orng_ORNG_MT19937_obj *obj = (orng_ORNG_MT19937_obj*)ecalloc(1, sizeof(orng_ORNG_MT19937_obj) + zend_object_properties_size(ce));
-	zend_object_std_init(&obj->std, ce);
-	object_properties_init(&obj->std, ce);
-	obj->std.handlers = &orng_object_handlers_ORNG_MT19937;
-	obj->mode = ORNG_RNG_MT19937_MODE_PHP;
-	return &obj->std;
-}
-
-ORNG_COMPAT_RNG_CLONE_FUNCTION(MT19937)
-{
-	zend_object *old_obj = ORNG_COMPAT_RNG_CLONE_GET_OBJ();
-	zend_object *new_obj = orng_ORNG_MT19937_new(old_obj->ce);
-
-	zend_objects_clone_members(new_obj, old_obj);
-
-	orng_ORNG_MT19937_obj *old = orng_ORNG_MT19937_from_obj(old_obj);
-	orng_ORNG_MT19937_obj *new = orng_ORNG_MT19937_from_obj(new_obj);
-
-	memcpy(new->state, old->state, sizeof(old->state));
-	new->next = old->next;
-	new->left = old->left;
-	new->mode = old->mode;
-
-	return new_obj;
-}
-
-static inline void orng_ORNG_MT19937_initialize(uint32_t seed, uint32_t *state)
+static inline void internal_mt_initialize(uint32_t seed, uint32_t *state)
 {
 	register uint32_t *s = state;
 	register uint32_t *r = state;
 	register int i = 1;
 
 	*s++ = seed & 0xffffffffU;
-	for( ; i < ORNG_RNG_MT19937_N; ++i ) {
+	for( ; i < ORNG_MT19937_N; ++i ) {
 		*s++ = ( 1812433253U * ( *r ^ (*r >> 30) ) + i ) & 0xffffffffU;
 		r++;
 	}
 }
 
-static inline void orng_ORNG_MT19937_reload(orng_ORNG_MT19937_obj *obj)
+static inline void internal_mt_reload(ORNG_MT19937_obj *obj)
 {
 	register uint32_t *s = obj->state;
 	register uint32_t *p = s;
 	register int i;
 
-	if (obj->mode == ORNG_RNG_MT19937_MODE_NORMAL) {
-		for (i = ORNG_RNG_MT19937_N - ORNG_RNG_MT19937_M; i--; ++p)
-			*p = ORNG_RNG_MT19937_twist(p[ORNG_RNG_MT19937_M], p[0], p[1]);
-		for (i = ORNG_RNG_MT19937_M; --i; ++p)
-			*p = ORNG_RNG_MT19937_twist(p[ORNG_RNG_MT19937_M-ORNG_RNG_MT19937_N], p[0], p[1]);
-		*p = ORNG_RNG_MT19937_twist(p[ORNG_RNG_MT19937_M-ORNG_RNG_MT19937_N], p[0], s[0]);
+	if (obj->mode == ORNG_MT19937_MODE_NORMAL) {
+		for (i = ORNG_MT19937_N - ORNG_MT19937_M; i--; ++p)
+			*p = ORNG_MT19937_twist(p[ORNG_MT19937_M], p[0], p[1]);
+		for (i = ORNG_MT19937_M; --i; ++p)
+			*p = ORNG_MT19937_twist(p[ORNG_MT19937_M-ORNG_MT19937_N], p[0], p[1]);
+		*p = ORNG_MT19937_twist(p[ORNG_MT19937_M-ORNG_MT19937_N], p[0], s[0]);
 	}
 	else {
-		for (i = ORNG_RNG_MT19937_N - ORNG_RNG_MT19937_M; i--; ++p)
-			*p = ORNG_RNG_MT19937_twist_php(p[ORNG_RNG_MT19937_M], p[0], p[1]);
-		for (i = ORNG_RNG_MT19937_M; --i; ++p)
-			*p = ORNG_RNG_MT19937_twist_php(p[ORNG_RNG_MT19937_M-ORNG_RNG_MT19937_N], p[0], p[1]);
-		*p = ORNG_RNG_MT19937_twist_php(p[ORNG_RNG_MT19937_M-ORNG_RNG_MT19937_N], p[0], s[0]);
+		for (i = ORNG_MT19937_N - ORNG_MT19937_M; i--; ++p)
+			*p = ORNG_MT19937_twist_php(p[ORNG_MT19937_M], p[0], p[1]);
+		for (i = ORNG_MT19937_M; --i; ++p)
+			*p = ORNG_MT19937_twist_php(p[ORNG_MT19937_M-ORNG_MT19937_N], p[0], p[1]);
+		*p = ORNG_MT19937_twist_php(p[ORNG_MT19937_M-ORNG_MT19937_N], p[0], s[0]);
 	}
-	obj->left = ORNG_RNG_MT19937_N;
+	obj->left = ORNG_MT19937_N;
 	obj->next = s;
 }
 
-PHPAPI zend_long orng_ORNG_MT19937_next(orng_ORNG_MT19937_obj *obj)
+static uint32_t next32(orng_rng_common *c)
 {
 	register uint32_t s1;
 
+	ORNG_MT19937_obj *obj = ((ORNG_MT19937_obj*)c->obj);
+
 	if (obj->left == 0) {
-		orng_ORNG_MT19937_reload(obj);
+		internal_mt_reload(obj);
 	}
 	--obj->left;
 
@@ -128,56 +93,55 @@ PHPAPI zend_long orng_ORNG_MT19937_next(orng_ORNG_MT19937_obj *obj)
 	return ( s1 ^ (s1 >> 18) );
 }
 
-static uint32_t orng_ORNG_MT19937_rand_range32(orng_ORNG_MT19937_obj *obj, uint32_t umax)
+static zend_object *create_object(zend_class_entry *ce)
 {
-	uint32_t r, l;
-
-	r = orng_ORNG_MT19937_next(obj);
-
-	if (UNEXPECTED(umax == UINT32_MAX)) {
-		return r;
-	}
-
-	umax++;
-
-	if ((umax & (umax - 1)) == 0) {
-		return r & (umax - 1);
-	}
-
-	l = UINT32_MAX - (UINT32_MAX % umax) - 1;
-
-	while (UNEXPECTED(r > l)) {
-		r = orng_ORNG_MT19937_next(obj);
-	}
-
-	return r % umax;
+	ORNG_MT19937_obj *obj = (ORNG_MT19937_obj*)ecalloc(1, sizeof(ORNG_MT19937_obj) + zend_object_properties_size(ce));
+	orng_rng_common *c = orng_rng_common_initialize(next32, NULL, obj);
+	obj->common = c;
+	zend_object_std_init(&obj->std, ce);
+	object_properties_init(&obj->std, ce);
+	obj->std.handlers = &oh_MT19937;
+	obj->mode = ORNG_MT19937_MODE_NORMAL;
+	return &obj->std;
 }
 
-static uint64_t orng_ORNG_MT19937_rand_range64(orng_ORNG_MT19937_obj *obj, uint32_t umax)
+static zend_object *create_object_php(zend_class_entry *ce)
 {
-	uint64_t r, l;
+	ORNG_MT19937_obj *obj = (ORNG_MT19937_obj*)ecalloc(1, sizeof(ORNG_MT19937_obj) + zend_object_properties_size(ce));
+	orng_rng_common *c = orng_rng_common_initialize(next32, NULL, obj);
+	obj->common = c;
+	zend_object_std_init(&obj->std, ce);
+	object_properties_init(&obj->std, ce);
+	obj->std.handlers = &oh_MT19937;
+	obj->mode = ORNG_MT19937_MODE_PHP;
+	return &obj->std;
+}
 
-	r = orng_ORNG_MT19937_next(obj);
-	r = (r << 32) | orng_ORNG_MT19937_next(obj);
-
-	if (UNEXPECTED(umax == UINT64_MAX)) {
-		return r;
+static void free_object(zend_object *object)
+{
+	ORNG_MT19937_obj *obj = ORNG_MT19937_obj_from_zend_object(object);
+	zend_object_std_dtor(&obj->std);
+	if (obj->common != NULL) {
+		efree(obj->common);
 	}
+}
 
-	umax++;
+ORNG_COMPAT_RNG_CLONE_FUNCTION(MT19937)
+{
+	zend_object *old_obj = ORNG_COMPAT_RNG_CLONE_GET_OBJ();
+	zend_object *new_obj = create_object(old_obj->ce);
 
-	if ((umax & (umax - 1)) == 0) {
-		return r & (umax - 1);
-	}
+	zend_objects_clone_members(new_obj, old_obj);
 
-	l = UINT64_MAX - (UINT64_MAX % umax) - 1;
+	ORNG_MT19937_obj *old = ORNG_MT19937_obj_from_zend_object(old_obj);
+	ORNG_MT19937_obj *new = ORNG_MT19937_obj_from_zend_object(new_obj);
 
-	while (UNEXPECTED(r > l)) {
-		r = orng_ORNG_MT19937_next(obj);
-		r = (r << 32) | orng_ORNG_MT19937_next(obj);
-	}
+	memcpy(new->state, old->state, sizeof(old->state));
+	new->next = old->next;
+	new->left = old->left;
+	new->mode = old->mode;
 
-	return r % umax;
+	return new_obj;
 }
 
 /* {{{ \ORNG\MT19937::__construct(int $seed) */
@@ -190,16 +154,17 @@ PHP_METHOD(ORNG_MT19937, __construct)
 		Z_PARAM_LONG(seed);
 	ZEND_PARSE_PARAMETERS_END();
 
-	orng_ORNG_MT19937_obj *obj = Z_ORNG_ORNG_MT19937_P(getThis());
-	orng_ORNG_MT19937_initialize(seed, obj->state);
+	ORNG_MT19937_obj *obj = Z_ORNG_MT19937_P(getThis());
+	internal_mt_initialize(seed, obj->state);
 }
 /* }}} */
 
 /* {{{ \ORNG\MT19937::next(): int */
 PHP_METHOD(ORNG_MT19937, next)
 {
-	orng_ORNG_MT19937_obj *obj = Z_ORNG_ORNG_MT19937_P(getThis());
-	RETURN_LONG(orng_ORNG_MT19937_next(obj) >> 1);
+	ORNG_MT19937_obj *obj = Z_ORNG_MT19937_P(getThis());
+
+	RETURN_LONG(obj->common->next32(obj->common) >> 1);
 }
 /* }}} */
 
@@ -218,17 +183,15 @@ PHP_METHOD(ORNG_MT19937, range)
 		ORNG_COMPAT_RETURN_ERROR_OR_THROW_MAX_SMALLER_THAN_MIN();
 	}
 
-	orng_ORNG_MT19937_obj *obj = Z_ORNG_ORNG_MT19937_P(getThis());
+	ORNG_MT19937_obj *obj = Z_ORNG_MT19937_P(getThis());
 
-	umax = max - min;
-
-#if ZEND_ULONG_MAX > UINT32_MAX
-	if (umax > UINT32_MAX) {
-		RETURN_LONG((zend_long) (orng_ORNG_MT19937_rand_range64(obj, umax) + min));
+	if (obj->mode == ORNG_MT19937_MODE_PHP) {
+		int64_t n = (int64_t) obj->common->next32(obj->common) >> 1;
+		ORNG_MT19937_RAND_RANGE_BADSCALING(n, min, max, ORNG_MT19937_MT_RAND_MAX);
+		RETURN_LONG((zend_long) n);
 	}
-#endif
 
-	RETURN_LONG((zend_long) (orng_ORNG_MT19937_rand_range32(obj, umax) + min));
+	RETURN_LONG(orng_rng_common_util_range(min, max, obj->common));
 }
 /* }}} */
 
@@ -236,17 +199,18 @@ PHP_MINIT_FUNCTION(orng_rng_mt19937)
 {
 	zend_class_entry ce, ce2;
 	INIT_CLASS_ENTRY(ce, ORNG_RNG_FQN(MT19937), class_ORNG_MT19937_methods);
-	orng_ce_ORNG_MT19937 = zend_register_internal_class(&ce);
-	zend_class_implements(orng_ce_ORNG_MT19937, 1, orng_ce_ORNG_RNGInterface);
-	orng_ce_ORNG_MT19937->create_object = orng_ORNG_MT19937_new;
-	memcpy(&orng_object_handlers_ORNG_MT19937, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-	orng_object_handlers_ORNG_MT19937.offset = XtOffsetOf(orng_ORNG_MT19937_obj, std);
-	orng_object_handlers_ORNG_MT19937.clone_obj = ORNG_COMPAT_RNG_CLONE(MT19937);
+	ce_ORNG_MT19937 = zend_register_internal_class(&ce);
+	zend_class_implements(ce_ORNG_MT19937, 1, orng_ce_ORNG_RNGInterface);
+	ce_ORNG_MT19937->create_object = create_object;
+	memcpy(&oh_MT19937, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+	oh_MT19937.offset = XtOffsetOf(ORNG_MT19937_obj, std);
+	oh_MT19937.clone_obj = ORNG_COMPAT_RNG_CLONE(MT19937);
+	oh_MT19937.free_obj = free_object;
 
 	INIT_CLASS_ENTRY(ce2, ORNG_RNG_FQN(MT19937PHP), class_ORNG_MT19937_methods);
-	orng_ce_ORNG_MT19937PHP = zend_register_internal_class(&ce2);
-	zend_class_implements(orng_ce_ORNG_MT19937PHP, 1, orng_ce_ORNG_RNGInterface);
-	orng_ce_ORNG_MT19937PHP->create_object = orng_ORNG_MT19937PHP_new;
+	ce_ORNG_MT19937PHP = zend_register_internal_class(&ce2);
+	zend_class_implements(ce_ORNG_MT19937PHP, 1, orng_ce_ORNG_RNGInterface);
+	ce_ORNG_MT19937PHP->create_object = create_object_php;
 
 	return SUCCESS;
 }

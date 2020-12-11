@@ -31,44 +31,56 @@
 #include "glibcrand.h"
 #include "glibcrand_arginfo.h"
 
-PHPAPI zend_class_entry *orng_ce_ORNG_GLibCRand;
+PHPAPI zend_class_entry *ce_ORNG_GLibCRand;
 
-static zend_object_handlers orng_object_handlers_ORNG_GLibCRand;
+static zend_object_handlers oh_GLibCRand;
 
-static zend_object *orng_ORNG_GLibCRand_new(zend_class_entry *ce)
+static uint32_t next32(orng_rng_common *c)
 {
-	orng_ORNG_GLibCRand_obj *obj = (orng_ORNG_GLibCRand_obj*)ecalloc(1, sizeof(orng_ORNG_GLibCRand_obj) + zend_object_properties_size(ce));
+	unsigned int r;
+
+	ORNG_GLibCRand_obj *obj = ((ORNG_GLibCRand_obj*)c->obj);
+
+	obj->r[obj->next % 344] = obj->r[(obj->next + 313) % 344] + obj->r[(obj->next + 341) % 344];
+	r = ((unsigned int) obj->r[obj->next % 344] >> 1);
+	obj->next = (obj->next + 1) % 344;
+	return r;
+}
+
+static zend_object *create_object(zend_class_entry *ce)
+{
+	ORNG_GLibCRand_obj *obj = (ORNG_GLibCRand_obj*)ecalloc(1, sizeof(ORNG_GLibCRand_obj) + zend_object_properties_size(ce));
+	orng_rng_common *c = orng_rng_common_initialize(next32, NULL, obj);
+	obj->common = c;
 	zend_object_std_init(&obj->std, ce);
 	object_properties_init(&obj->std, ce);
-	obj->std.handlers = &orng_object_handlers_ORNG_GLibCRand;
+	obj->std.handlers = &oh_GLibCRand;
 	return &obj->std;
+}
+
+static void free_object(zend_object *object)
+{
+	ORNG_GLibCRand_obj *obj = ORNG_GLibCRand_obj_from_zend_object(object);
+	zend_object_std_dtor(&obj->std);
+	if (obj->common != NULL) {
+		efree(obj->common);
+	}
 }
 
 ORNG_COMPAT_RNG_CLONE_FUNCTION(GLibCRand)
 {
 	zend_object *old_obj = ORNG_COMPAT_RNG_CLONE_GET_OBJ();
-	zend_object *new_obj = orng_ORNG_GLibCRand_new(old_obj->ce);
+	zend_object *new_obj = create_object(old_obj->ce);
 
 	zend_objects_clone_members(new_obj, old_obj);
 
-	orng_ORNG_GLibCRand_obj *old = orng_ORNG_GLibCRand_from_obj(old_obj);
-	orng_ORNG_GLibCRand_obj *new = orng_ORNG_GLibCRand_from_obj(new_obj);
+	ORNG_GLibCRand_obj *old = ORNG_GLibCRand_obj_from_zend_object(old_obj);
+	ORNG_GLibCRand_obj *new = ORNG_GLibCRand_obj_from_zend_object(new_obj);
 
 	memcpy(new->r, old->r, sizeof(old->r));
 	new->next = old->next;
 
 	return new_obj;
-}
-
-PHPAPI zend_long orng_ORNG_GLibCRand_next(orng_ORNG_GLibCRand_obj *obj)
-{
-	zend_long r;
-
-	unsigned int x = obj->r[obj->next % 344] = obj->r[(obj->next + 313) % 344] + obj->r[(obj->next + 341) % 344];
-	obj->next = (obj->next + 1) % 344;
-	r = (x >> 1);
-
-	return r;
 }
 
 /* {{{ \ORNG\GLibCRand::__construct(int $seed) */
@@ -81,7 +93,7 @@ PHP_METHOD(ORNG_GLibCRand, __construct)
 		Z_PARAM_LONG(seed);
 	ZEND_PARSE_PARAMETERS_END();
 
-	orng_ORNG_GLibCRand_obj *obj = Z_ORNG_ORNG_GLibCRand_P(getThis());
+	ORNG_GLibCRand_obj *obj = Z_ORNG_GLibCRand_P(getThis());
 
 	long useed = (unsigned int) seed;
 
@@ -109,8 +121,8 @@ PHP_METHOD(ORNG_GLibCRand, __construct)
 /* {{{ \ORNG\GLibCRand::next(): int */
 PHP_METHOD(ORNG_GLibCRand, next)
 {
-	orng_ORNG_GLibCRand_obj *obj = Z_ORNG_ORNG_GLibCRand_P(getThis());
-	RETURN_LONG(orng_ORNG_GLibCRand_next(obj));
+	ORNG_GLibCRand_obj *obj = Z_ORNG_GLibCRand_P(getThis());
+	RETURN_LONG(obj->common->next32(obj->common));
 }
 /* }}} */
 
@@ -128,25 +140,26 @@ PHP_METHOD(ORNG_GLibCRand, range)
 		ORNG_COMPAT_RETURN_ERROR_OR_THROW_MAX_SMALLER_THAN_MIN();
 	}
 
-	orng_ORNG_GLibCRand_obj *obj = Z_ORNG_ORNG_GLibCRand_P(getThis());
+	ORNG_GLibCRand_obj *obj = Z_ORNG_GLibCRand_P(getThis());
 
-	n = orng_ORNG_GLibCRand_next(obj);
+	n = obj->common->next32(obj->common);
 	n = min + (zend_long) ((double) ((double) max - min + 1.0) * (n / (2147483647 + 1.0)));
 
 	RETURN_LONG(n);
 }
 /* }}} */
 
-PHP_MINIT_FUNCTION(orng_rng_glibcrand)
+PHP_MINIT_FUNCTION(orng_glibcrand)
 {
 	zend_class_entry ce;
 	INIT_CLASS_ENTRY(ce, ORNG_RNG_FQN(GLibCRand), class_ORNG_GLibCRand_methods);
-	orng_ce_ORNG_GLibCRand = zend_register_internal_class(&ce);
-	zend_class_implements(orng_ce_ORNG_GLibCRand, 1, orng_ce_ORNG_RNGInterface);
-	orng_ce_ORNG_GLibCRand->create_object = orng_ORNG_GLibCRand_new;
-	memcpy(&orng_object_handlers_ORNG_GLibCRand, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-	orng_object_handlers_ORNG_GLibCRand.offset = XtOffsetOf(orng_ORNG_GLibCRand_obj, std);
-	orng_object_handlers_ORNG_GLibCRand.clone_obj = ORNG_COMPAT_RNG_CLONE(GLibCRand);
+	ce_ORNG_GLibCRand = zend_register_internal_class(&ce);
+	zend_class_implements(ce_ORNG_GLibCRand, 1, orng_ce_ORNG_RNGInterface);
+	ce_ORNG_GLibCRand->create_object = create_object;
+	memcpy(&oh_GLibCRand, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+	oh_GLibCRand.offset = XtOffsetOf(ORNG_GLibCRand_obj, std);
+	oh_GLibCRand.clone_obj = ORNG_COMPAT_RNG_CLONE(GLibCRand);
+	oh_GLibCRand.free_obj = free_object;
 
 	return SUCCESS;
 }
