@@ -147,7 +147,7 @@ PHP_METHOD(ORNG_XorShift128Plus, range)
 }
 /* }}} */
 
-/* {{{ \ORNG\ORNG_XorShift128Plus::strShuffle(string $string): string */
+/* {{{ \ORNG\XorShift128Plus::strShuffle(string $string): string */
 PHP_METHOD(ORNG_XorShift128Plus, strShuffle)
 {
 	zend_string *arg;
