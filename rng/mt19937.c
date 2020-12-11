@@ -212,6 +212,25 @@ PHP_METHOD(ORNG_MT19937, shuffle)
 }
 /* }}} */
 
+/* {{{ \ORNG\ORNG_MT19937::strShuffle(string $string): string */
+PHP_METHOD(ORNG_MT19937, strShuffle)
+{
+	zend_string *arg;
+
+	ZEND_PARSE_PARAMETERS_START(1, 1)
+		Z_PARAM_STR(arg)
+	ZEND_PARSE_PARAMETERS_END();
+
+	RETVAL_STRINGL(ZSTR_VAL(arg), ZSTR_LEN(arg));
+
+	ORNG_MT19937_obj *obj = Z_ORNG_MT19937_P(getThis());
+
+	if (Z_STRLEN_P(return_value) > 1) {
+		orng_rng_common_util_string_shuffle(obj->common, Z_STRVAL_P(return_value), (zend_long) Z_STRLEN_P(return_value));
+	}
+}
+/* }}} */
+
 PHP_MINIT_FUNCTION(orng_rng_mt19937)
 {
 	zend_class_entry ce, ce2;

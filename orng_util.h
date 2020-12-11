@@ -191,6 +191,29 @@ static void orng_rng_common_util_array_data_shuffle(orng_rng_common *c, zval *ar
 	}
 }
 
+/* from upstream: https://github.com/php/php-src/blob/9234446ca04a4bf897988d977835d03918148b12/ext/standard/string.c#L5659 */
+static void orng_rng_common_util_string_shuffle(orng_rng_common *c, char *str, zend_long len)
+{
+	zend_long n_elems, rnd_idx, n_left;
+	char temp;
+	/* The implementation is stolen from array_data_shuffle       */
+	/* Thus the characteristics of the randomization are the same */
+	n_elems = len;
 
+	if (n_elems <= 1) {
+		return;
+	}
+
+	n_left = n_elems;
+
+	while (--n_left) {
+		rnd_idx = orng_rng_common_util_range(c, 0, n_left);
+		if (rnd_idx != n_left) {
+			temp = str[n_left];
+			str[n_left] = str[rnd_idx];
+			str[rnd_idx] = temp;
+		}
+	}
+}
 
 #endif

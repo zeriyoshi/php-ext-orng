@@ -147,6 +147,25 @@ PHP_METHOD(ORNG_XorShift128Plus, range)
 }
 /* }}} */
 
+/* {{{ \ORNG\ORNG_XorShift128Plus::strShuffle(string $string): string */
+PHP_METHOD(ORNG_XorShift128Plus, strShuffle)
+{
+	zend_string *arg;
+
+	ZEND_PARSE_PARAMETERS_START(1, 1)
+		Z_PARAM_STR(arg)
+	ZEND_PARSE_PARAMETERS_END();
+
+	RETVAL_STRINGL(ZSTR_VAL(arg), ZSTR_LEN(arg));
+
+	ORNG_XorShift128Plus_obj *obj = Z_XorShift128Plus_P(getThis());
+
+	if (Z_STRLEN_P(return_value) > 1) {
+		orng_rng_common_util_string_shuffle(obj->common, Z_STRVAL_P(return_value), (zend_long) Z_STRLEN_P(return_value));
+	}
+}
+/* }}} */
+
 /* {{{ \ORNG\XorShift128Plus::shuffle(array &$array): bool */
 PHP_METHOD(ORNG_XorShift128Plus, shuffle)
 {

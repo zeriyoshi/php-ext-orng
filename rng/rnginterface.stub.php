@@ -10,4 +10,5 @@ interface RNGInterface
     public function next(): int;
     public function range(int $min, int $max): int;
     public function shuffle(array &$array): bool;
+    public function strShuffle(string $string): string;
 }
