@@ -17,29 +17,32 @@
   +----------------------------------------------------------------------+
 */
 
-#ifndef ORNG_RNG_GLIBCRAND_H
-# define ORNG_RNG_GLIBCRAND_H
+#ifndef ORNG_GLIBCRAND_H
+# define ORNG_GLIBCRAND_H
 
 # include "php.h"
 
-extern PHPAPI zend_class_entry *orng_ce_ORNG_GLibCRand;
+# include "../orng_util.h"
 
-typedef struct _orng_ORNG_GLibCRand_obj {
+extern PHPAPI zend_class_entry *ce_ORNG_GLibCRand;
+
+typedef struct _ORNG_GLibCRand_obj {
 	int r[344];
 	int next;
+  orng_rng_common *common;
 	zend_object std;
-} orng_ORNG_GLibCRand_obj;
+} ORNG_GLibCRand_obj;
 
-static inline orng_ORNG_GLibCRand_obj *orng_ORNG_GLibCRand_from_obj(zend_object *obj) {
-	return (orng_ORNG_GLibCRand_obj*)((char*)(obj) - XtOffsetOf(orng_ORNG_GLibCRand_obj, std));
+static inline ORNG_GLibCRand_obj *ORNG_GLibCRand_obj_from_zend_object(zend_object *obj) {
+	return (ORNG_GLibCRand_obj*)((char*)(obj) - XtOffsetOf(ORNG_GLibCRand_obj, std));
 }
 
-# define Z_ORNG_ORNG_GLibCRand_P(zval) orng_ORNG_GLibCRand_from_obj(Z_OBJ_P(zval))
+# define Z_ORNG_GLibCRand_P(zval) ORNG_GLibCRand_obj_from_zend_object(Z_OBJ_P(zval))
 
 PHP_METHOD(ORNG_GLibCRand, __construct);
 PHP_METHOD(ORNG_GLibCRand, next);
 PHP_METHOD(ORNG_GLibCRand, range);
 
-PHP_MINIT_FUNCTION(orng_rng_glibcrand);
+PHP_MINIT_FUNCTION(orng_glibcrand);
 
 #endif
