@@ -83,15 +83,20 @@ PHP_METHOD(ORNG_GLibCRand, __construct)
 
 	orng_ORNG_GLibCRand_obj *obj = Z_ORNG_ORNG_GLibCRand_P(getThis());
 
-	if (seed == 0) {
-		seed = 1;
+	long useed = (unsigned int) seed;
+
+	if (useed == 0) {
+		useed = 1;
 	}
 
-	obj->r[0] = seed;
-	for (i = 1; i < 31; i++) {
-		obj->r[i] = (unsigned int)((16807 * (unsigned long) obj->r[i - 1]) % 2147483647);
+	obj->r[0] = useed;
+	for (i = 1; i< 31; i++) {
+		obj->r[i] = (16807LL * obj->r[i - 1]) % 2147483647;
+		if (obj->r[i] < 0) {
+			obj->r[i] += 2147483647;
+		}
 	}
-	for (i = 31; i < 34; i++) {
+	for (i = 31; i< 34; i++) {
 		obj->r[i] = obj->r[i - 31];
 	}
 	for (i = 34; i < 344; i++) {

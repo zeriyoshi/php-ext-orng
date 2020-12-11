@@ -25,7 +25,7 @@
 extern PHPAPI zend_class_entry *orng_ce_ORNG_GLibCRand;
 
 typedef struct _orng_ORNG_GLibCRand_obj {
-	zend_long r[344];
+	int r[344];
 	int next;
 	zend_object std;
 } orng_ORNG_GLibCRand_obj;
