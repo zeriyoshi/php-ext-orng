@@ -29,10 +29,6 @@
 	ZEND_PARSE_PARAMETERS_END()
 # endif
 
-# ifndef IS_MIXED
-#  define IS_MIXED 16
-# endif
-
 # define ORNG_COMPAT_RNG_CLONE(__cn) orng_ORNG_clone_autodefined_##__cn
 
 # if PHP_VERSION_ID >= 80000
