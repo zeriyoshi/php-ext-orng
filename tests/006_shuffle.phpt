@@ -9,7 +9,7 @@ if (!extension_loaded('orng')) {
 --FILE--
 <?php
 
-const SEED = 114514;
+const SEED = 1000;
 
 $classes = include('data/classes.inc');
 

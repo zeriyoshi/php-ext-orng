@@ -9,7 +9,7 @@ if (!extension_loaded('orng')) {
 --FILE--
 <?php
 
-const SEED = 114514;
+const SEED = 1000;
 
 $classes = include('data/classes.inc');
 
@@ -19,10 +19,10 @@ foreach ($classes as $class) {
     $shuffled_string = $rng->strShuffle($string);
     for ($i = 0; $i < strlen($string); $i++) {
         if ($string[$i] !== $shuffled_string[$i]) {
-            break;
+            continue 2;
         }
-        die("NG, String not shuffled. class: ${class}");
     }
+    die("NG, String not shuffled. class: ${class} string: ${shuffled_string}");
 }
 die('OK, All string shuffled.');
 
