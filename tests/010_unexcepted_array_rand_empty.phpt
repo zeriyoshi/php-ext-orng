@@ -5,8 +5,8 @@ Check arrayRand method in unexcepted empty array. (PHP >= 8.0)
 if (!extension_loaded('orng')) {
     die('skip: extension not loaded.');
 }
-if (version_compare(PHP_VERSION, '8.0.0', '>=')) {
-    die('skip: this test only available on PHP < 8.0.');
+if (version_compare(PHP_VERSION, '8.0.0', '<')) {
+    die('skip: this test only available on PHP >= 8.0.');
 }
 ?>
 --FILE--
@@ -25,10 +25,19 @@ foreach ($classes as $class) {
 }
 ?>
 --EXPECTF--
-Warning: ORNG\GLibCRand::arrayRand(): Array is empty in %s on line %d
-
-Warning: ORNG\XorShift128Plus::arrayRand(): Array is empty in %s on line %d
-
-Warning: ORNG\MT19937::arrayRand(): Array is empty in %s on line %d
-
-Warning: ORNG\MT19937PHP::arrayRand(): Array is empty in %s on line %d
+ValueError: ORNG\GLibCRand::arrayRand(): Argument #1 ($array) cannot be empty in %s:%d
+Stack trace:
+#0 %s(%d): ORNG\GLibCRand->arrayRand(Array, 1)
+#1 {main}
+ValueError: ORNG\XorShift128Plus::arrayRand(): Argument #1 ($array) cannot be empty in %s:%d
+Stack trace:
+#0 %s(%d): ORNG\XorShift128Plus->arrayRand(Array, 1)
+#1 {main}
+ValueError: ORNG\MT1%d%d37::arrayRand(): Argument #1 ($array) cannot be empty in %s:%d
+Stack trace:
+#0 %s(%d): ORNG\MT1%d%d37->arrayRand(Array, 1)
+#1 {main}
+ValueError: ORNG\MT1%d%d37PHP::arrayRand(): Argument #1 ($array) cannot be empty in %s:%d
+Stack trace:
+#0 %s(%d): ORNG\MT1%d%d37PHP->arrayRand(Array, 1)
+#1 {main}

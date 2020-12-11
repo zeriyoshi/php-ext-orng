@@ -5,8 +5,8 @@ Check arrayRand method in unexcepted over num. (PHP >= 8.0)
 if (!extension_loaded('orng')) {
     die('skip: extension not loaded.');
 }
-if (version_compare(PHP_VERSION, '8.0.0', '>=')) {
-    die('skip: this test only available on PHP < 8.0.');
+if (version_compare(PHP_VERSION, '8.0.0', '<')) {
+    die('skip: this test only available on PHP >= 8.0.');
 }
 ?>
 --FILE--
@@ -25,10 +25,19 @@ foreach ($classes as $class) {
 }
 ?>
 --EXPECTF--
-Warning: ORNG\GLibCRand::arrayRand(): Second argument has to be between 1 and the number of elements in the array in %s on line %d
-
-Warning: ORNG\XorShift128Plus::arrayRand(): Second argument has to be between 1 and the number of elements in the array in %s on line %d
-
-Warning: ORNG\MT19937::arrayRand(): Second argument has to be between 1 and the number of elements in the array in %s on line %d
-
-Warning: ORNG\MT19937PHP::arrayRand(): Second argument has to be between 1 and the number of elements in the array in %s on line %d
+ValueError: ORNG\GLibCRand::arrayRand(): Argument #2 ($num) must be between 1 and the number of elements in argument #1 ($array) in %s:%d
+Stack trace:
+#0 %s(%d): ORNG\GLibCRand->arrayRand(Array, 2)
+#1 {main}
+ValueError: ORNG\XorShift128Plus::arrayRand(): Argument #2 ($num) must be between 1 and the number of elements in argument #1 ($array) in %s:%d
+Stack trace:
+#0 %s(%d): ORNG\XorShift128Plus->arrayRand(Array, 2)
+#1 {main}
+ValueError: ORNG\MT19937::arrayRand(): Argument #2 ($num) must be between 1 and the number of elements in argument #1 ($array) in %s:%d
+Stack trace:
+#0 %s(%d): ORNG\MT19937->arrayRand(Array, 2)
+#1 {main}
+ValueError: ORNG\MT19937PHP::arrayRand(): Argument #2 ($num) must be between 1 and the number of elements in argument #1 ($array) in %s:%d
+Stack trace:
+#0 %s(%d): ORNG\MT19937PHP->arrayRand(Array, 2)
+#1 {main}
