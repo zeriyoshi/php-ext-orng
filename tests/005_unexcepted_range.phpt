@@ -21,9 +21,9 @@ foreach ($classes as $class) {
 }
 ?>
 --EXPECTF--
-Warning: ORNG\XorShift128Plus::range(): max(1) is smaller than min(10) in %s on line %d
-
 Warning: ORNG\GLibCRand::range(): max(1) is smaller than min(10) in %s on line %d
+
+Warning: ORNG\XorShift128Plus::range(): max(1) is smaller than min(10) in %s on line %d
 
 Warning: ORNG\MT19937::range(): max(1) is smaller than min(10) in %s on line %d
 
