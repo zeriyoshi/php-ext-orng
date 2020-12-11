@@ -259,16 +259,20 @@ PHP_METHOD(ORNG_GLibCRand, arrayRand)
 
 	zend_hash_real_init_packed(Z_ARRVAL_P(return_value));
 	ZEND_HASH_FILL_PACKED(Z_ARRVAL_P(return_value)) {
+		zval zv;
 		/* We can't use zend_hash_index_find()
 		 * because the array may have string keys or gaps. */
 		ZEND_HASH_FOREACH_KEY(Z_ARRVAL_P(input), num_key, string_key) {
 			if (zend_bitset_in(bitset, i) ^ negative_bitset) {
 				if (string_key) {
-					ZEND_HASH_FILL_SET_STR_COPY(string_key);
+					// ZEND_HASH_FILL_SET_STR_COPY(string_key);
+					ZVAL_STR_COPY(&zv, string_key);
 				} else {
-					ZEND_HASH_FILL_SET_LONG(num_key);
+					// ZEND_HASH_FILL_SET_LONG(num_key);
+					ZVAL_LONG(&zv, num_key);
 				}
-				ZEND_HASH_FILL_NEXT();
+				// ZEND_HASH_FILL_NEXT();
+				ZEND_HASH_FILL_ADD(&zv);
 			}
 			i++;
 		} ZEND_HASH_FOREACH_END();
