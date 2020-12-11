@@ -10,5 +10,6 @@ class GLibCRand implements RNGInterface
     public function next(): int {}
     public function range(int $min, int $max): int {}
     public function shuffle(array &$array): bool {}
+    public function arrayRand(array $array, int $num = 1): int|string|array {}
     public function strShuffle(string $string): string {}
 }

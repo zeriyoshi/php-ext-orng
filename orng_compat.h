@@ -38,6 +38,12 @@
 #  define ORNG_COMPAT_RETURN_ERROR_OR_THROW_RANGE() \
 	zend_argument_value_error(2, "must be greater than or equal to argument #1 ($min)"); \
 	RETURN_THROWS();
+#  define ORNG_COMPAT_RETURN_ERROR_OR_THROW_ARRAY_RAND_EMPTY() \
+	zend_argument_value_error(1, "cannot be empty"); \
+	RETURN_THROWS();
+#  define ORNG_COMPAT_RETURN_ERROR_OR_THROW_ARRAY_RAND_AVAIL() \
+	php_error_docref(NULL, E_WARNING, "Second argument has to be between 1 and the number of elements in the array"); \
+	return;
 # else
 #  define ORNG_COMPAT_RNG_CLONE_FUNCTION(__cn) \
 	static zend_object *orng_ORNG_clone_autodefined_##__cn(zval *__old)
@@ -45,6 +51,12 @@
 #  define ORNG_COMPAT_RETURN_ERROR_OR_THROW_RANGE() \
 	php_error_docref(NULL, E_WARNING, "max(" ZEND_LONG_FMT ") is smaller than min(" ZEND_LONG_FMT ")", max, min); \
 	RETURN_FALSE;
+#  define ORNG_COMPAT_RETURN_ERROR_OR_THROW_ARRAY_RAND_EMPTY() \
+	php_error_docref(NULL, E_WARNING, "Array is empty"); \
+	return;
+#  define ORNG_COMPAT_RETURN_ERROR_OR_THROW_ARRAY_RAND_AVAIL() \
+	zend_argument_value_error(2, "must be between 1 and the number of elements in argument #1 ($array)"); \
+	RETURN_THROWS();
 #  ifndef ZEND_ABSTRACT_ME_WITH_FLAGS
 #   define ZEND_ABSTRACT_ME_WITH_FLAGS(classname, name, arg_info, flags) ZEND_RAW_FENTRY(#name, NULL, arg_info, flags)
 #  endif
