@@ -110,4 +110,87 @@ static zend_long orng_rng_common_util_range(orng_rng_common *c, zend_long min, z
 # endif
 }
 
+/* from upstream: https://github.com/php/php-src/blob/8591bb70a4b22a3bb7ca897bface89fcc2b85d64/ext/standard/array.c#L2880 */
+static void orng_rng_common_util_array_data_shuffle(orng_rng_common *c, zval *array)
+{
+	uint32_t idx, j, n_elems;
+	Bucket *p, temp;
+	HashTable *hash;
+	zend_long rnd_idx;
+	uint32_t n_left;
+
+	n_elems = zend_hash_num_elements(Z_ARRVAL_P(array));
+
+	if (n_elems < 1) {
+		return;
+	}
+
+	hash = Z_ARRVAL_P(array);
+	n_left = n_elems;
+
+	if (EXPECTED(!HT_HAS_ITERATORS(hash))) {
+		if (hash->nNumUsed != hash->nNumOfElements) {
+			for (j = 0, idx = 0; idx < hash->nNumUsed; idx++) {
+				p = hash->arData + idx;
+				if (Z_TYPE(p->val) == IS_UNDEF) continue;
+				if (j != idx) {
+					hash->arData[j] = *p;
+				}
+				j++;
+			}
+		}
+		while (--n_left) {
+			rnd_idx = orng_rng_common_util_range(c, 0, n_left);
+			if (rnd_idx != n_left) {
+				temp = hash->arData[n_left];
+				hash->arData[n_left] = hash->arData[rnd_idx];
+				hash->arData[rnd_idx] = temp;
+			}
+		}
+	} else {
+		uint32_t iter_pos = zend_hash_iterators_lower_pos(hash, 0);
+
+		if (hash->nNumUsed != hash->nNumOfElements) {
+			for (j = 0, idx = 0; idx < hash->nNumUsed; idx++) {
+				p = hash->arData + idx;
+				if (Z_TYPE(p->val) == IS_UNDEF) continue;
+				if (j != idx) {
+					hash->arData[j] = *p;
+					if (idx == iter_pos) {
+						zend_hash_iterators_update(hash, idx, j);
+						iter_pos = zend_hash_iterators_lower_pos(hash, iter_pos + 1);
+					}
+				}
+				j++;
+			}
+		}
+		while (--n_left) {
+			rnd_idx = orng_rng_common_util_range(c, 0, n_left);
+			if (rnd_idx != n_left) {
+				temp = hash->arData[n_left];
+				hash->arData[n_left] = hash->arData[rnd_idx];
+				hash->arData[rnd_idx] = temp;
+				zend_hash_iterators_update(hash, (uint32_t)rnd_idx, n_left);
+			}
+		}
+	}
+	hash->nNumUsed = n_elems;
+	hash->nInternalPointer = 0;
+
+	for (j = 0; j < n_elems; j++) {
+		p = hash->arData + j;
+		if (p->key) {
+			zend_string_release_ex(p->key, 0);
+		}
+		p->h = j;
+		p->key = NULL;
+	}
+	hash->nNextFreeElement = n_elems;
+	if (!(HT_FLAGS(hash) & HASH_FLAG_PACKED)) {
+		zend_hash_to_packed(hash);
+	}
+}
+
+
+
 #endif

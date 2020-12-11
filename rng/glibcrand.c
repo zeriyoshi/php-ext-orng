@@ -149,6 +149,23 @@ PHP_METHOD(ORNG_GLibCRand, range)
 }
 /* }}} */
 
+/* {{{ \ORNG\GLibCRand::shuffle(array &$array): bool */
+PHP_METHOD(ORNG_GLibCRand, shuffle)
+{
+	zval *array;
+
+	ZEND_PARSE_PARAMETERS_START(1, 1)
+		Z_PARAM_ARRAY_EX(array, 0, 1)
+	ZEND_PARSE_PARAMETERS_END();
+
+	ORNG_GLibCRand_obj *obj = Z_ORNG_GLibCRand_P(getThis());
+
+	orng_rng_common_util_array_data_shuffle(obj->common, array);
+
+	RETURN_TRUE;
+}
+/* }}} */
+
 PHP_MINIT_FUNCTION(orng_glibcrand)
 {
 	zend_class_entry ce;

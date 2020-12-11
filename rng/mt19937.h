@@ -60,10 +60,6 @@ static inline ORNG_MT19937_obj *ORNG_MT19937_obj_from_zend_object(zend_object *o
 
 # define Z_ORNG_MT19937_P(zval) ORNG_MT19937_obj_from_zend_object(Z_OBJ_P(zval))
 
-PHP_METHOD(ORNG_MT19937, __construct);
-PHP_METHOD(ORNG_MT19937, next);
-PHP_METHOD(ORNG_MT19937, range);
-
 PHP_MINIT_FUNCTION(orng_rng_mt19937);
 
 #endif

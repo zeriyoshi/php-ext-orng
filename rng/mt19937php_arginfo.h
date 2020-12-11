@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 0fff57d9fb0ba45108e8ab960daf6e757c2ad069 */
+ * Stub hash: 0dd033faeabd27cef608ae6010e34a95dfdd0fec */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_ORNG_MT19937PHP___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, seed, IS_LONG, 0)
@@ -13,15 +13,21 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_ORNG_MT19937PHP_range, 0, 
 	ZEND_ARG_TYPE_INFO(0, max, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_ORNG_MT19937PHP_shuffle, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(1, array, IS_ARRAY, 0)
+ZEND_END_ARG_INFO()
+
 
 ZEND_METHOD(ORNG_MT19937PHP, __construct);
 ZEND_METHOD(ORNG_MT19937PHP, next);
 ZEND_METHOD(ORNG_MT19937PHP, range);
+ZEND_METHOD(ORNG_MT19937PHP, shuffle);
 
 
 static const zend_function_entry class_ORNG_MT19937PHP_methods[] = {
 	ZEND_ME(ORNG_MT19937PHP, __construct, arginfo_class_ORNG_MT19937PHP___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(ORNG_MT19937PHP, next, arginfo_class_ORNG_MT19937PHP_next, ZEND_ACC_PUBLIC)
 	ZEND_ME(ORNG_MT19937PHP, range, arginfo_class_ORNG_MT19937PHP_range, ZEND_ACC_PUBLIC)
+	ZEND_ME(ORNG_MT19937PHP, shuffle, arginfo_class_ORNG_MT19937PHP_shuffle, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };

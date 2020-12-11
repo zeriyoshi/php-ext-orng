@@ -39,10 +39,6 @@ static inline ORNG_GLibCRand_obj *ORNG_GLibCRand_obj_from_zend_object(zend_objec
 
 # define Z_ORNG_GLibCRand_P(zval) ORNG_GLibCRand_obj_from_zend_object(Z_OBJ_P(zval))
 
-PHP_METHOD(ORNG_GLibCRand, __construct);
-PHP_METHOD(ORNG_GLibCRand, next);
-PHP_METHOD(ORNG_GLibCRand, range);
-
 PHP_MINIT_FUNCTION(orng_glibcrand);
 
 #endif

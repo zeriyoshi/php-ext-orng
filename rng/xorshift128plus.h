@@ -38,10 +38,6 @@ static inline ORNG_XorShift128Plus_obj *ORNG_XorShift128Plus_obj_from_zend_objec
 
 # define Z_XorShift128Plus_P(zval) ORNG_XorShift128Plus_obj_from_zend_object(Z_OBJ_P(zval))
 
-PHP_METHOD(ORNG_XorShift128Plus, __construct);
-PHP_METHOD(ORNG_XorShift128Plus, next);
-PHP_METHOD(ORNG_XorShift128Plus, range);
-
 PHP_MINIT_FUNCTION(orng_rng_xorshift128plus);
 
 #endif

@@ -195,6 +195,23 @@ PHP_METHOD(ORNG_MT19937, range)
 }
 /* }}} */
 
+/* {{{ \ORNG\MT19937::shuffle(array &$array): bool */
+PHP_METHOD(ORNG_MT19937, shuffle)
+{
+	zval *array;
+
+	ZEND_PARSE_PARAMETERS_START(1, 1)
+		Z_PARAM_ARRAY_EX(array, 0, 1)
+	ZEND_PARSE_PARAMETERS_END();
+
+	ORNG_MT19937_obj *obj = Z_ORNG_MT19937_P(getThis());
+
+	orng_rng_common_util_array_data_shuffle(obj->common, array);
+
+	RETURN_TRUE;
+}
+/* }}} */
+
 PHP_MINIT_FUNCTION(orng_rng_mt19937)
 {
 	zend_class_entry ce, ce2;
