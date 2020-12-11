@@ -58,6 +58,15 @@ static zend_object *create_object(zend_class_entry *ce)
 	return &obj->std;
 }
 
+static void free_object(zend_object *object)
+{
+	ORNG_GLibCRand_obj *obj = ORNG_GLibCRand_obj_from_zend_object(object);
+	zend_object_std_dtor(&obj->std);
+	if (obj->common != NULL) {
+		efree(obj->common);
+	}
+}
+
 ORNG_COMPAT_RNG_CLONE_FUNCTION(GLibCRand)
 {
 	zend_object *old_obj = ORNG_COMPAT_RNG_CLONE_GET_OBJ();
@@ -150,6 +159,7 @@ PHP_MINIT_FUNCTION(orng_glibcrand)
 	memcpy(&oh_GLibCRand, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 	oh_GLibCRand.offset = XtOffsetOf(ORNG_GLibCRand_obj, std);
 	oh_GLibCRand.clone_obj = ORNG_COMPAT_RNG_CLONE(GLibCRand);
+	oh_GLibCRand.free_obj = free_object;
 
 	return SUCCESS;
 }

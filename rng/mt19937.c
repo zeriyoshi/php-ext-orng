@@ -117,6 +117,15 @@ static zend_object *create_object_php(zend_class_entry *ce)
 	return &obj->std;
 }
 
+static void free_object(zend_object *object)
+{
+	ORNG_MT19937_obj *obj = ORNG_MT19937_obj_from_zend_object(object);
+	zend_object_std_dtor(&obj->std);
+	if (obj->common != NULL) {
+		efree(obj->common);
+	}
+}
+
 ORNG_COMPAT_RNG_CLONE_FUNCTION(MT19937)
 {
 	zend_object *old_obj = ORNG_COMPAT_RNG_CLONE_GET_OBJ();
@@ -196,6 +205,7 @@ PHP_MINIT_FUNCTION(orng_rng_mt19937)
 	memcpy(&oh_MT19937, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 	oh_MT19937.offset = XtOffsetOf(ORNG_MT19937_obj, std);
 	oh_MT19937.clone_obj = ORNG_COMPAT_RNG_CLONE(MT19937);
+	oh_MT19937.free_obj = free_object;
 
 	INIT_CLASS_ENTRY(ce2, ORNG_RNG_FQN(MT19937PHP), class_ORNG_MT19937_methods);
 	ce_ORNG_MT19937PHP = zend_register_internal_class(&ce2);

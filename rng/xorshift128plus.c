@@ -77,6 +77,15 @@ static zend_object *create_object(zend_class_entry *ce)
 	return &obj->std;
 }
 
+static void free_object(zend_object *object)
+{
+	ORNG_XorShift128Plus_obj *obj = ORNG_XorShift128Plus_obj_from_zend_object(object);
+	zend_object_std_dtor(&obj->std);
+	if (obj->common != NULL) {
+		efree(obj->common);
+	}
+}
+
 ORNG_COMPAT_RNG_CLONE_FUNCTION(XorShift128Plus)
 {
 	zend_object *old_obj = ORNG_COMPAT_RNG_CLONE_GET_OBJ();
@@ -148,6 +157,7 @@ PHP_MINIT_FUNCTION(orng_rng_xorshift128plus)
 	memcpy(&oh_XorShift128Plus, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 	oh_XorShift128Plus.offset = XtOffsetOf(ORNG_XorShift128Plus_obj, std);
 	oh_XorShift128Plus.clone_obj = ORNG_COMPAT_RNG_CLONE(XorShift128Plus);
+	oh_XorShift128Plus.free_obj = free_object;
 
 	return SUCCESS;
 }
