@@ -35,14 +35,14 @@
 #  define ORNG_COMPAT_RNG_CLONE_FUNCTION(__cn) \
 	static zend_object *orng_ORNG_clone_autodefined_##__cn(zend_object *__old)
 #  define ORNG_COMPAT_RNG_CLONE_GET_OBJ() __old
-#  define ORNG_COMPAT_RETURN_ERROR_OR_THROW_MAX_SMALLER_THAN_MIN() \
+#  define ORNG_COMPAT_RETURN_ERROR_OR_THROW_RANGE() \
 	zend_argument_value_error(2, "must be greater than or equal to argument #1 ($min)"); \
 	RETURN_THROWS();
 # else
 #  define ORNG_COMPAT_RNG_CLONE_FUNCTION(__cn) \
 	static zend_object *orng_ORNG_clone_autodefined_##__cn(zval *__old)
 #  define ORNG_COMPAT_RNG_CLONE_GET_OBJ() Z_OBJ_P(__old)
-#  define ORNG_COMPAT_RETURN_ERROR_OR_THROW_MAX_SMALLER_THAN_MIN() \
+#  define ORNG_COMPAT_RETURN_ERROR_OR_THROW_RANGE() \
 	php_error_docref(NULL, E_WARNING, "max(" ZEND_LONG_FMT ") is smaller than min(" ZEND_LONG_FMT ")", max, min); \
 	RETURN_FALSE;
 #  ifndef ZEND_ABSTRACT_ME_WITH_FLAGS
