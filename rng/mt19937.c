@@ -31,7 +31,11 @@
 #include "rnginterface.h"
 
 #include "mt19937.h"
-#include "mt19937_arginfo.h"
+#if PHP_VERSION_ID >= 80000
+# include "mt19937_arginfo.h"
+#else
+# include "mt19937_arginfo_7.h"
+#endif
 // Note: "mt19937php_arghinfo.h" is not required.
 
 PHPAPI zend_class_entry *ce_ORNG_MT19937;

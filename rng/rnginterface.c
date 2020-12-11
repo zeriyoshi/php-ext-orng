@@ -27,7 +27,11 @@
 #include "../php_orng.h"
 
 #include "rnginterface.h"
-#include "rnginterface_arginfo.h"
+#if PHP_VERSION_ID >= 80000
+# include "rnginterface_arginfo.h"
+#else
+# include "rnginterface_arginfo_7.h"
+#endif
 
 PHPAPI zend_class_entry *orng_ce_ORNG_RNGInterface;
 

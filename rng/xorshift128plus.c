@@ -31,7 +31,11 @@
 #include "rnginterface.h"
 
 #include "xorshift128plus.h"
-#include "xorshift128plus_arginfo.h"
+#if PHP_VERSION_ID >= 80000
+# include "xorshift128plus_arginfo.h"
+#else
+# include "xorshift128plus_arginfo_7.h"
+#endif
 
 PHPAPI zend_class_entry *ce_ORNG_XorShift128Plus;
 

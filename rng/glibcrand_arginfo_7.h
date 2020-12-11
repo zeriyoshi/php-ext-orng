@@ -1,6 +1,3 @@
-/* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 3098ec597402f46a3d10c982706a8a048b63adee */
-
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_ORNG_GLibCRand___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, seed, IS_LONG, 0)
 ZEND_END_ARG_INFO()
@@ -17,9 +14,9 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_ORNG_GLibCRand_shuffle, 0,
 	ZEND_ARG_TYPE_INFO(1, array, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_MASK_EX(arginfo_class_ORNG_GLibCRand_arrayRand, 0, 1, MAY_BE_LONG|MAY_BE_STRING|MAY_BE_ARRAY)
-	ZEND_ARG_TYPE_INFO(0, array, IS_ARRAY, 0)
-	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, num, IS_LONG, 0, "1")
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_ORNG_GLibCRand_arrayRand, 0, 0, 1)
+	ZEND_ARG_INFO(0, arg)
+	ZEND_ARG_INFO(0, num)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_ORNG_GLibCRand_strShuffle, 0, 1, IS_STRING, 0)

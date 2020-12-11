@@ -30,7 +30,11 @@
 #include "rnginterface.h"
 
 #include "glibcrand.h"
-#include "glibcrand_arginfo.h"
+#if PHP_VERSION_ID >= 80000
+# include "glibcrand_arginfo.h"
+#else
+# include "glibcrand_arginfo_7.h"
+#endif
 
 PHPAPI zend_class_entry *ce_ORNG_GLibCRand;
 
