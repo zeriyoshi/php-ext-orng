@@ -50,7 +50,7 @@ static uint64_t orng_rng_common_util_next64bynext32(orng_rng_common *common)
 return r;
 }
 
-static zend_long orng_rng_common_util_range(zend_long min, zend_long max, orng_rng_common *c)
+static zend_long orng_rng_common_util_range(orng_rng_common *c, zend_long min, zend_long max)
 {
 # if ZEND_ULONG_MAX > UINT32_MAX
 	uint64_t result, limit;
@@ -109,7 +109,5 @@ static zend_long orng_rng_common_util_range(zend_long min, zend_long max, orng_r
 	return (zend_long) (min + (result % umax));
 # endif
 }
-
-
 
 #endif

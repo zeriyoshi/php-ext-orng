@@ -143,7 +143,7 @@ PHP_METHOD(ORNG_XorShift128Plus, range)
 
 	ORNG_XorShift128Plus_obj *obj = Z_XorShift128Plus_P(getThis());
 
-	RETURN_LONG(orng_rng_common_util_range(min, max, obj->common));
+	RETURN_LONG(orng_rng_common_util_range(obj->common, min, max));
 }
 /* }}} */
 

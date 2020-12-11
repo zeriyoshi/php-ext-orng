@@ -191,7 +191,7 @@ PHP_METHOD(ORNG_MT19937, range)
 		RETURN_LONG((zend_long) n);
 	}
 
-	RETURN_LONG(orng_rng_common_util_range(min, max, obj->common));
+	RETURN_LONG(orng_rng_common_util_range(obj->common, min, max));
 }
 /* }}} */
 
