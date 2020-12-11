@@ -12,12 +12,7 @@ if (!extension_loaded('orng')) {
 const EXCEPT_MIN = 10;
 const EXCEPT_MAX = 20;
 
-$classes = [
-    \ORNG\GLibCRand::class,
-    \ORNG\XorShift128Plus::class,
-    \ORNG\MT19937::class,
-    \ORNG\MT19937PHP::class,
-];
+$classes = include('data/classes.inc');
 $excepts = range(EXCEPT_MIN, EXCEPT_MAX);
 
 foreach ($classes as $class) {

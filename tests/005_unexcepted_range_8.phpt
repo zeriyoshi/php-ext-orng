@@ -14,12 +14,7 @@ if (version_compare(PHP_VERSION, '8.0.0', '<')) {
 
 const SEED = 10;
 
-$classes = [
-    \ORNG\XorShift128Plus::class,
-    \ORNG\GLibCRand::class,
-    \ORNG\MT19937::class,
-    \ORNG\MT19937PHP::class,
-];
+$classes = include('data/classes.inc');
 
 foreach ($classes as $class) {
     try {
@@ -30,13 +25,13 @@ foreach ($classes as $class) {
 }
 ?>
 --EXPECTF--
-ValueError: ORNG\XorShift128Plus::range(): Argument #2 ($max) must be greater than or equal to argument #1 ($min) in %s:%d
-Stack trace:
-#0 %s(%d): ORNG\XorShift128Plus->range(10, 1)
-#1 {main}
 ValueError: ORNG\GLibCRand::range(): Argument #2 ($max) must be greater than or equal to argument #1 ($min) in %s:%d
 Stack trace:
 #0 %s(%d): ORNG\GLibCRand->range(10, 1)
+#1 {main}
+ValueError: ORNG\XorShift128Plus::range(): Argument #2 ($max) must be greater than or equal to argument #1 ($min) in %s:%d
+Stack trace:
+#0 %s(%d): ORNG\XorShift128Plus->range(10, 1)
 #1 {main}
 ValueError: ORNG\MT19937::range(): Argument #2 ($max) must be greater than or equal to argument #1 ($min) in %s:%d
 Stack trace:

@@ -10,12 +10,7 @@ if (!extension_loaded('orng')) {
 <?php
 const SEED = 50;
 
-$classes = [
-    \ORNG\GLibCRand::class,
-    \ORNG\XorShift128Plus::class,
-    \ORNG\MT19937::class,
-    \ORNG\MT19937PHP::class,
-];
+$classes = include('data/classes.inc');
 
 foreach ($classes as $class) {
     $origin = new $class(SEED);
