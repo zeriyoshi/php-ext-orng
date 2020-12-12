@@ -9,7 +9,7 @@ if (!extension_loaded('orng')) {
 --FILE--
 <?php
 
-[$seed, $range_min, $range_max, $table] = include('data/shuffle_rand.inc');
+[$seed, $range_min, $range_max, $table] = include('data/tables/shuffle_rand.inc');
 $generated_table = range($range_min, $range_max);
 (new \ORNG\GLibCRand($seed))->shuffle($generated_table);
 for ($i = $range_min; $i < $range_max; $i++) {

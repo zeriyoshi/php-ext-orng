@@ -9,7 +9,7 @@ if (!extension_loaded('orng')) {
 --FILE--
 <?php
 
-[$seed, $base_strings, $shuffled_strings] = include('data/str_shuffle_rand.inc');
+[$seed, $base_strings, $shuffled_strings] = include('data/tables/str_shuffle_rand.inc');
 $generated_strings = (new \ORNG\GLibCRand($seed))->strShuffle($base_strings);
 if ($shuffled_strings !== $generated_strings) {
     die("NG, GLibCRand generated incorrect results.");

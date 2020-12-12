@@ -33,11 +33,15 @@ ValueError: ORNG\XorShift128Plus::arrayRand(): Argument #1 ($array) cannot be em
 Stack trace:
 #0 %s(%d): ORNG\XorShift128Plus->arrayRand(Array, 1)
 #1 {main}
-ValueError: ORNG\MT1%d%d37::arrayRand(): Argument #1 ($array) cannot be empty in %s:%d
+ValueError: ORNG\MT19937::arrayRand(): Argument #1 ($array) cannot be empty in %s:%d
 Stack trace:
-#0 %s(%d): ORNG\MT1%d%d37->arrayRand(Array, 1)
+#0 %s(%d): ORNG\MT19937->arrayRand(Array, 1)
 #1 {main}
-ValueError: ORNG\MT1%d%d37PHP::arrayRand(): Argument #1 ($array) cannot be empty in %s:%d
+ValueError: ORNG\MT19937PHP::arrayRand(): Argument #1 ($array) cannot be empty in %s:%d
 Stack trace:
-#0 %s(%d): ORNG\MT1%d%d37PHP->arrayRand(Array, 1)
+#0 %s(%d): ORNG\MT19937PHP->arrayRand(Array, 1)
+#1 {main}
+ValueError: ORNG\MT19937MB::arrayRand(): Argument #1 ($array) cannot be empty in %s:%d
+Stack trace:
+#0 %s(%d): ORNG\MT19937MB->arrayRand(Array, 1)
 #1 {main}

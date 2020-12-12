@@ -9,7 +9,7 @@ if (!extension_loaded('orng')) {
 --FILE--
 <?php
 
-foreach (include('data/rand.inc') as $seed => $values) {
+foreach (include('data/tables/rand.inc') as $seed => $values) {
     $rng = new \ORNG\GLibCRand($seed);
     foreach ($values as $value) {
         $next = $rng->next();

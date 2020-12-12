@@ -54,6 +54,12 @@ switch ($target) {
         exit(array_rand_mt_generate($output_dir));
     case 'str_shuffle_mt':
         exit(str_shuffle_mt_generate($output_dir));
+    case 'mt_mb':
+        exit(mt_mb_generate($output_dir));
+    case 'shuffle_mt_mb':
+        exit(shuffle_mt_mb_generate($output_dir));
+    case 'array_rand_mt_mb':
+        exit(array_rand_mt_mb_generate($output_dir));
     default:
         echo "ERROR: Invalid target: ${target}\n";
         exit(4);
@@ -288,7 +294,7 @@ function array_rand_mt_generate(string $output_dir): int {
         ($output_dir . DIRECTORY_SEPARATOR . 'array_rand_mt.inc'),
         php_wrap(var_export($table, true))
     );
-    return 0;    
+    return 0;
 }
 
 function str_shuffle_mt_generate(string $output_dir): int {
@@ -308,6 +314,94 @@ function str_shuffle_mt_generate(string $output_dir): int {
 
     file_put_contents(
         ($output_dir . DIRECTORY_SEPARATOR . 'str_shuffle_mt.inc'),
+        php_wrap(var_export($table, true))
+    );
+    return 0;
+}
+
+function mt_mb_generate(string $output_dir): int {
+    if (version_compare(PHP_VERSION, '7.1', '<') || version_compare(PHP_VERSION, '7.2', '>')) {
+        echo "ERROR: Modulo-bias bug has only in PHP 7.1.x.\n";
+        return 20;
+    }
+    $seed = 1234567890;
+    $min = 0;
+    $max = (0x66666666 - 1);
+    $table = [
+        0 => $seed,
+        1 => $min,
+        2 => $max,
+        3 => [],
+    ];
+    \mt_srand($seed);
+    for ($i = 0; $i < 10000; $i++) {
+        $table[3][] = \mt_rand($min, $max);
+    }
+
+    file_put_contents(
+        ($output_dir . DIRECTORY_SEPARATOR . 'mt_mb.inc'), 
+        php_wrap(var_export($table, true))
+    );
+    return 0;
+}
+
+function shuffle_mt_mb_generate(string $output_dir): int {
+    if (version_compare(PHP_VERSION, '7.1', '<') || version_compare(PHP_VERSION, '7.2', '>')) {
+        echo "ERROR: Modulo-bias bug has only in PHP 7.1.x.\n";
+        return 20;
+    }
+    $range_min = 0;
+    $range_max = 9999;
+    $table = range($range_min , $range_max);
+    $seed = 1234567890;
+    \mt_srand($seed);
+    \shuffle($table);
+    $table = [
+        0 => $seed,
+        1 => $range_min,
+        2 => $range_max,
+        3 => $table,
+    ];
+
+    file_put_contents(
+        ($output_dir . DIRECTORY_SEPARATOR . 'shuffle_mt_mb.inc'),
+        php_wrap(var_export($table, true))
+    );
+    return 0;
+}
+
+function array_rand_mt_mb_generate(string $output_dir): int {
+    if (version_compare(PHP_VERSION, '7.1', '<') || version_compare(PHP_VERSION, '7.2', '>')) {
+        echo "ERROR: Modulo-bias bug has only in PHP 7.1.x.\n";
+        return 20;
+    }
+    $range_min = 0;
+    $range_max = 9999;
+    $base_array = range($range_min , $range_max);
+    $pick_array_key = [];
+    $multi_pick_array_keys = [];
+    $multi_pick_num = 3;
+    $seed = 1234567890;
+    \mt_srand($seed);
+    foreach ($base_array as $i) {
+        $pick_array_key[] = \array_rand($base_array, 1);
+    }
+    \mt_srand($seed);
+    foreach ($base_array as $i) {
+        $multi_pick_array_keys[] = \array_rand($base_array, $multi_pick_num);
+    }
+
+    $table = [
+        0 => $seed,
+        1 => $range_min,
+        2 => $range_max,
+        3 => $pick_array_key,
+        4 => $multi_pick_array_keys,
+        5 => $multi_pick_num,
+    ];
+
+    file_put_contents(
+        ($output_dir . DIRECTORY_SEPARATOR . 'array_rand_mt_mb.inc'),
         php_wrap(var_export($table, true))
     );
     return 0;

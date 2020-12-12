@@ -9,7 +9,7 @@ if (!extension_loaded('orng')) {
 --FILE--
 <?php
 
-[$seed, $range_min, $range_max, $table] = include('data/shuffle_mt.inc');
+[$seed, $range_min, $range_max, $table] = include('data/tables/shuffle_mt.inc');
 $generated_table = range($range_min, $range_max);
 (new \ORNG\MT19937($seed))->shuffle($generated_table);
 for ($i = $range_min; $i < $range_max; $i++) {
