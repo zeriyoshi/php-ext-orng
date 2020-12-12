@@ -47,7 +47,7 @@ static uint64_t orng_rng_common_util_next64bynext32(orng_rng_common *common)
 	r = common->next32(common);
 	r = (r << 32) | common->next32(common);
 
-return r;
+	return r;
 }
 
 static zend_long orng_rng_common_util_range(orng_rng_common *c, zend_long min, zend_long max)
@@ -220,5 +220,4 @@ static void orng_rng_common_util_string_shuffle(orng_rng_common *c, char *str, z
 		}
 	}
 }
-
 #endif

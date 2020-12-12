@@ -367,7 +367,7 @@ PHP_METHOD(ORNG_GLibCRand, strShuffle)
 }
 /* }}} */
 
-PHP_MINIT_FUNCTION(orng_glibcrand)
+PHP_MINIT_FUNCTION(orng_rng_glibcrand)
 {
 	zend_class_entry ce;
 	INIT_CLASS_ENTRY(ce, ORNG_RNG_FQN(GLibCRand), class_ORNG_GLibCRand_methods);

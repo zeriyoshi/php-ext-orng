@@ -67,12 +67,7 @@ benchmark(
     }
 );
 
-foreach ([
-    \ORNG\GLibCRand::class,
-    \ORNG\XorShift128Plus::class,
-    \ORNG\MT19937::class,
-    \ORNG\MT19937PHP::class,
-] as $class) {
+foreach (include(__DIR__ . '/../tests/data/classes.inc') as $class) {
     benchmark(
         "orng ${class} performance (count: ${count})",
         function () use ($class, $seed, $count) {
