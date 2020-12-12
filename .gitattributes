@@ -1,0 +1,3 @@
+tests/data/* linguist-generated
+*.h linguist-language=C
+*.phpt linguist-language=PHP
