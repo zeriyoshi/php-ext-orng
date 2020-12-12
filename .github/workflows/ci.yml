@@ -83,6 +83,9 @@ jobs:
           php --version
       - name: Clone
         uses: actions/checkout@master
+      - name: Regenerate Data
+        run: |
+          ./util/data_gen_docker.sh
       - name: Build and Test
         env:
           NO_INTERACTION: "1"
