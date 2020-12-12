@@ -252,7 +252,7 @@ PHP_METHOD(ORNG_MT19937, arrayRand)
 		if ((uint32_t)num_avail < ht->nNumUsed - (ht->nNumUsed>>1)) {
 			/* If less than 1/2 of elements are used, don't sample. Instead search for a
 			 * specific offset using linear scan. */
-			zend_long i = 0, randval = orng_rng_common_util_range(obj->common, 0, num_avail - 1);
+			zend_long i = 0, randval = orng_rng_common_util_range32(obj->common, 0, num_avail - 1);
 			ZEND_HASH_FOREACH_KEY(Z_ARRVAL_P(input), num_key, string_key) {
 				if (i == randval) {
 					if (string_key) {
@@ -270,7 +270,7 @@ PHP_METHOD(ORNG_MT19937, arrayRand)
 		 * probability of hitting N empty elements in a row is (1-1/2)**N.
 		 * For N=10 this becomes smaller than 0.1%. */
 		do {
-			zend_long randval = orng_rng_common_util_range(obj->common, 0, ht->nNumUsed - 1);
+			zend_long randval = orng_rng_common_util_range32(obj->common, 0, ht->nNumUsed - 1);
 			Bucket *bucket = &ht->arData[randval];
 			if (!Z_ISUNDEF(bucket->val)) {
 				if (bucket->key) {
@@ -299,7 +299,7 @@ PHP_METHOD(ORNG_MT19937, arrayRand)
 
 	i = num_req;
 	while (i) {
-		zend_long randval = orng_rng_common_util_range(obj->common, 0, num_avail - 1);
+		zend_long randval = orng_rng_common_util_range32(obj->common, 0, num_avail - 1);
 		if (!zend_bitset_in(bitset, randval)) {
 			zend_bitset_incl(bitset, randval);
 			i--;

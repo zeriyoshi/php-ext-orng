@@ -85,6 +85,12 @@ static zend_long orng_rng_common_util_range(orng_rng_common *c, zend_long min, z
 	return (zend_long) (min + (result % umax));
 
 # else
+	return orng_rng_common_util_range32(c, min, max);
+# endif
+}
+
+static zend_long orng_rng_common_util_range32(orng_rng_common *c, zend_long min, zend_long max)
+{
 	uint32_t result, limit;
 	uint32_t umax = max - min;
 
@@ -107,7 +113,6 @@ static zend_long orng_rng_common_util_range(orng_rng_common *c, zend_long min, z
 	}
 
 	return (zend_long) (min + (result % umax));
-# endif
 }
 
 /* from upstream: https://github.com/php/php-src/blob/8591bb70a4b22a3bb7ca897bface89fcc2b85d64/ext/standard/array.c#L2880 */
@@ -140,7 +145,7 @@ static void orng_rng_common_util_array_data_shuffle(orng_rng_common *c, zval *ar
 			}
 		}
 		while (--n_left) {
-			rnd_idx = orng_rng_common_util_range(c, 0, n_left);
+			rnd_idx = orng_rng_common_util_range32(c, 0, n_left);
 			if (rnd_idx != n_left) {
 				temp = hash->arData[n_left];
 				hash->arData[n_left] = hash->arData[rnd_idx];
@@ -165,7 +170,7 @@ static void orng_rng_common_util_array_data_shuffle(orng_rng_common *c, zval *ar
 			}
 		}
 		while (--n_left) {
-			rnd_idx = orng_rng_common_util_range(c, 0, n_left);
+			rnd_idx = orng_rng_common_util_range32(c, 0, n_left);
 			if (rnd_idx != n_left) {
 				temp = hash->arData[n_left];
 				hash->arData[n_left] = hash->arData[rnd_idx];
@@ -207,7 +212,7 @@ static void orng_rng_common_util_string_shuffle(orng_rng_common *c, char *str, z
 	n_left = n_elems;
 
 	while (--n_left) {
-		rnd_idx = orng_rng_common_util_range(c, 0, n_left);
+		rnd_idx = orng_rng_common_util_range32(c, 0, n_left);
 		if (rnd_idx != n_left) {
 			temp = str[n_left];
 			str[n_left] = str[rnd_idx];
