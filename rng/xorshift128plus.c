@@ -127,7 +127,7 @@ PHP_METHOD(ORNG_XorShift128Plus, __construct)
 PHP_METHOD(ORNG_XorShift128Plus, next)
 {
 	ORNG_XorShift128Plus_obj *obj = Z_XorShift128Plus_P(getThis());
-	RETURN_LONG(obj->common->next64(obj->common));
+	RETURN_LONG(obj->common->next64(obj->common) >> 1);
 }
 /* }}} */
 
