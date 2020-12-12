@@ -50,30 +50,34 @@ static uint64_t orng_rng_common_util_next64bynext32(orng_rng_common *common)
 	return r;
 }
 
-static zend_long orng_rng_common_util_range(orng_rng_common *c, zend_long min, zend_long max)
-{
 # if ZEND_ULONG_MAX > UINT32_MAX
+static uint64_t orng_rng_common_util_rand_range64(orng_rng_common *c, uint64_t umax) {
 	uint64_t result, limit;
-	uint64_t umax = max - min;
 
 	if (c->next64 != NULL) {
 		result = c->next64(c);
 	} else {
 		result = orng_rng_common_util_next64bynext32(c);
 	}
+	
 
+	/* Special case where no modulus is required */
 	if (UNEXPECTED(umax == UINT64_MAX)) {
-		return (zend_long) (min + result);
+		return result;
 	}
 
+	/* Increment the max so the range is inclusive of max */
 	umax++;
 
+	/* Powers of two are not biased */
 	if ((umax & (umax - 1)) == 0) {
-		return (zend_long) (min + result & (umax - 1));
+		return result & (umax - 1);
 	}
 
+	/* Ceiling under which UINT64_MAX % max == 0 */
 	limit = UINT64_MAX - (UINT64_MAX % umax) - 1;
 
+	/* Discard numbers over the limit to avoid modulo bias */
 	while (UNEXPECTED(result > limit)) {
 		if (c->next64 != NULL) {
 			result = c->next64(c);
@@ -82,37 +86,49 @@ static zend_long orng_rng_common_util_range(orng_rng_common *c, zend_long min, z
 		}
 	}
 
-	return (zend_long) (min + (result % umax));
-
-# else
-	return orng_rng_common_util_range32(c, min, max);
-# endif
+	return result % umax;
 }
+# endif
 
-static zend_long orng_rng_common_util_range32(orng_rng_common *c, zend_long min, zend_long max)
-{
+static uint32_t orng_rng_common_util_rand_range32(orng_rng_common *c, uint32_t umax) {
 	uint32_t result, limit;
-	uint32_t umax = max - min;
 
 	result = c->next32(c);
 
+	/* Special case where no modulus is required */
 	if (UNEXPECTED(umax == UINT32_MAX)) {
-		return (zend_long) (min + result);
+		return result;
 	}
 
+	/* Increment the max so the range is inclusive of max */
 	umax++;
 
+	/* Powers of two are not biased */
 	if ((umax & (umax - 1)) == 0) {
-		return (zend_long) (min+ (result & (umax - 1)));
+		return result & (umax - 1);
 	}
 
+	/* Ceiling under which UINT32_MAX % max == 0 */
 	limit = UINT32_MAX - (UINT32_MAX % umax) - 1;
 
+	/* Discard numbers over the limit to avoid modulo bias */
 	while (UNEXPECTED(result > limit)) {
 		result = c->next32(c);
 	}
 
-	return (zend_long) (min + (result % umax));
+	return result % umax;
+}
+
+/* from upstream:  */
+static zend_long orng_rng_common_util_rand_range(orng_rng_common *c, zend_long min, zend_long max)
+{
+	zend_ulong umax = max - min;
+# if ZEND_ULONG_MAX > UINT32_MAX
+	if (umax > UINT32_MAX) {
+		return (zend_long) (orng_rng_common_util_rand_range64(c, umax) + min);
+	}
+# endif
+	return (zend_long) (orng_rng_common_util_rand_range32(c, umax) + min);
 }
 
 /* from upstream: https://github.com/php/php-src/blob/8591bb70a4b22a3bb7ca897bface89fcc2b85d64/ext/standard/array.c#L2880 */
@@ -145,7 +161,7 @@ static void orng_rng_common_util_array_data_shuffle(orng_rng_common *c, zval *ar
 			}
 		}
 		while (--n_left) {
-			rnd_idx = orng_rng_common_util_range32(c, 0, n_left);
+			rnd_idx = orng_rng_common_util_rand_range(c, 0, n_left);
 			if (rnd_idx != n_left) {
 				temp = hash->arData[n_left];
 				hash->arData[n_left] = hash->arData[rnd_idx];
@@ -170,7 +186,7 @@ static void orng_rng_common_util_array_data_shuffle(orng_rng_common *c, zval *ar
 			}
 		}
 		while (--n_left) {
-			rnd_idx = orng_rng_common_util_range32(c, 0, n_left);
+			rnd_idx = orng_rng_common_util_rand_range(c, 0, n_left);
 			if (rnd_idx != n_left) {
 				temp = hash->arData[n_left];
 				hash->arData[n_left] = hash->arData[rnd_idx];
@@ -212,7 +228,7 @@ static void orng_rng_common_util_string_shuffle(orng_rng_common *c, char *str, z
 	n_left = n_elems;
 
 	while (--n_left) {
-		rnd_idx = orng_rng_common_util_range32(c, 0, n_left);
+		rnd_idx = orng_rng_common_util_rand_range(c, 0, n_left);
 		if (rnd_idx != n_left) {
 			temp = str[n_left];
 			str[n_left] = str[rnd_idx];
