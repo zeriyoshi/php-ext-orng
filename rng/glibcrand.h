@@ -26,6 +26,21 @@
 
 extern PHPAPI zend_class_entry *ce_ORNG_GLibCRand;
 
+/* System Rand functions */
+# ifndef ORNG_GLIBCRAND_MAX
+#  define ORNG_GLIBCRAND_MAX (1<<15)
+# endif
+
+/* In ZTS mode we rely on rand_r() so we must use RAND_MAX. */
+# if !defined(ZTS) && (defined(HAVE_LRAND48) || defined(HAVE_RANDOM))
+#  define ORNG_GLIBCRAND_RAND_MAX 2147483647
+# else
+#  define ORNG_GLIBCRAND_RAND_MAX RAND_MAX
+# endif
+
+#define ORNG_GLIBCRAND_RAND_RANGE(__n, __min, __max, __tmax) \
+    (__n) = (__min) + (zend_long) ((double) ( (double) (__max) - (__min) + 1.0) * ((__n) / ((__tmax) + 1.0)))
+
 typedef struct _ORNG_GLibCRand_obj {
 	int r[344];
 	int next;
@@ -39,10 +54,6 @@ static inline ORNG_GLibCRand_obj *ORNG_GLibCRand_obj_from_zend_object(zend_objec
 
 # define Z_ORNG_GLibCRand_P(zval) ORNG_GLibCRand_obj_from_zend_object(Z_OBJ_P(zval))
 
-PHP_METHOD(ORNG_GLibCRand, __construct);
-PHP_METHOD(ORNG_GLibCRand, next);
-PHP_METHOD(ORNG_GLibCRand, range);
-
-PHP_MINIT_FUNCTION(orng_glibcrand);
+PHP_MINIT_FUNCTION(orng_rng_glibcrand);
 
 #endif

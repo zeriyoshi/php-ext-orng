@@ -14,21 +14,16 @@ if (version_compare(PHP_VERSION, '8.0.0', '>=')) {
 
 const SEED = 10;
 
-$classes = [
-    \ORNG\XorShift128Plus::class,
-    \ORNG\GLibCRand::class,
-    \ORNG\MT19937::class,
-    \ORNG\MT19937PHP::class,
-];
+$classes = include('data/classes.inc');
 
 foreach ($classes as $class) {
     (new $class(SEED))->range(10, 1);
 }
 ?>
 --EXPECTF--
-Warning: ORNG\XorShift128Plus::range(): max(1) is smaller than min(10) in %s on line %d
-
 Warning: ORNG\GLibCRand::range(): max(1) is smaller than min(10) in %s on line %d
+
+Warning: ORNG\XorShift128Plus::range(): max(1) is smaller than min(10) in %s on line %d
 
 Warning: ORNG\MT19937::range(): max(1) is smaller than min(10) in %s on line %d
 

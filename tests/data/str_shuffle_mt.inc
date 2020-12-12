@@ -1,0 +1,5 @@
+<?php return array (
+  0 => -7556611459920751914,
+  1 => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+  2 => 'r  xuii  tiudnciiucl g b qtclmq eutatpuLonmi n m  ens m ein mtntpiatet neamlumroi o lutnra  oeaarethosrs nspdanE iaDxuosdeensmpdesiiufc sevuta aaui dr lgeiqocioi  baua snria escitt eauuecimiamtilrldtld oedcle u gsr, sc ouudupc  u ilaot rdnidolue  r uila miutiep , nooon nriououriililmaei  ls  nproramt eet,ve np tu i rUa.ivdeullo ies.oa  dprti cqxtnlleisiai.csi eocaoaedesttemoimeu emde ,naimnroerronotatldfsnft rqliapdt.oenatud  rtceo cbettcop ',
+);

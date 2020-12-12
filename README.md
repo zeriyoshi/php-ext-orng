@@ -32,6 +32,27 @@ interface \ORNG\RNGInterface
    * Generate random number in range.
    */
   public function range(int $min, int $max): int;
+
+  /**
+   * Shuffle an array.
+   * 
+   * @see https://www.php.net/manual/en/function.shuffle.php
+   */
+  public function shuffle(array &$array): bool;
+
+  /**
+   * Pick one or more random keys out of an array.
+   * 
+   * @see https://www.php.net/manual/en/function.array-rand
+   */
+  public function arrayRand(array $array, int $num = 1): int|string|array;
+
+  /**
+   * Randomly shuffles a string.
+   * 
+   * @see https://www.php.net/manual/en/function.str-shuffle
+   */
+  public function strShuffle(string $string): string;
 }
 ```
 

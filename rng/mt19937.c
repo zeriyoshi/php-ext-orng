@@ -22,6 +22,7 @@
 #endif
 
 #include "php.h"
+#include "zend_bitset.h"
 
 #include "../orng_util.h"
 #include "../orng_compat.h"
@@ -30,7 +31,11 @@
 #include "rnginterface.h"
 
 #include "mt19937.h"
-#include "mt19937_arginfo.h"
+#if PHP_VERSION_ID >= 80000
+# include "mt19937_arginfo.h"
+#else
+# include "mt19937_arginfo_7.h"
+#endif
 // Note: "mt19937php_arghinfo.h" is not required.
 
 PHPAPI zend_class_entry *ce_ORNG_MT19937;
@@ -180,7 +185,7 @@ PHP_METHOD(ORNG_MT19937, range)
 	ZEND_PARSE_PARAMETERS_END();
 
 	if (UNEXPECTED(max < min)) {
-		ORNG_COMPAT_RETURN_ERROR_OR_THROW_MAX_SMALLER_THAN_MIN();
+		ORNG_COMPAT_RETURN_ERROR_OR_THROW_RANGE();
 	}
 
 	ORNG_MT19937_obj *obj = Z_ORNG_MT19937_P(getThis());
@@ -191,7 +196,158 @@ PHP_METHOD(ORNG_MT19937, range)
 		RETURN_LONG((zend_long) n);
 	}
 
-	RETURN_LONG(orng_rng_common_util_range(min, max, obj->common));
+	RETURN_LONG(orng_rng_common_util_range(obj->common, min, max));
+}
+/* }}} */
+
+/* {{{ \ORNG\MT19937::shuffle(array &$array): bool */
+PHP_METHOD(ORNG_MT19937, shuffle)
+{
+	zval *array;
+
+	ZEND_PARSE_PARAMETERS_START(1, 1)
+		Z_PARAM_ARRAY_EX(array, 0, 1)
+	ZEND_PARSE_PARAMETERS_END();
+
+	ORNG_MT19937_obj *obj = Z_ORNG_MT19937_P(getThis());
+
+	orng_rng_common_util_array_data_shuffle(obj->common, array);
+
+	RETURN_TRUE;
+}
+/* }}} */
+
+/* {{{ \ORNG\MT19937::arrayRand(array $array, int $num = 1): int|string|array */
+// FIXME: duplicate code
+PHP_METHOD(ORNG_MT19937, arrayRand)
+{
+	zval *input;
+	zend_long num_req = 1;
+	zend_string *string_key;
+	zend_ulong num_key;
+	int i;
+	int num_avail;
+	zend_bitset bitset;
+	int negative_bitset = 0;
+	uint32_t bitset_len;
+	ALLOCA_FLAG(use_heap)
+
+	ORNG_MT19937_obj *obj = Z_ORNG_MT19937_P(getThis());
+
+	ZEND_PARSE_PARAMETERS_START(1, 2)
+		Z_PARAM_ARRAY(input)
+		Z_PARAM_OPTIONAL
+		Z_PARAM_LONG(num_req)
+	ZEND_PARSE_PARAMETERS_END();
+
+	num_avail = zend_hash_num_elements(Z_ARRVAL_P(input));
+
+	if (num_avail == 0) {
+		ORNG_COMPAT_RETURN_ERROR_OR_THROW_ARRAY_RAND_EMPTY();
+	}
+
+	if (num_req == 1) {
+		HashTable *ht = Z_ARRVAL_P(input);
+
+		if ((uint32_t)num_avail < ht->nNumUsed - (ht->nNumUsed>>1)) {
+			/* If less than 1/2 of elements are used, don't sample. Instead search for a
+			 * specific offset using linear scan. */
+			zend_long i = 0, randval = orng_rng_common_util_range32(obj->common, 0, num_avail - 1);
+			ZEND_HASH_FOREACH_KEY(Z_ARRVAL_P(input), num_key, string_key) {
+				if (i == randval) {
+					if (string_key) {
+						RETURN_STR_COPY(string_key);
+					} else {
+						RETURN_LONG(num_key);
+					}
+				}
+				i++;
+			} ZEND_HASH_FOREACH_END();
+		}
+
+		/* Sample random buckets until we hit one that is not empty.
+		 * The worst case probability of hitting an empty element is 1-1/2. The worst case
+		 * probability of hitting N empty elements in a row is (1-1/2)**N.
+		 * For N=10 this becomes smaller than 0.1%. */
+		do {
+			zend_long randval = orng_rng_common_util_range32(obj->common, 0, ht->nNumUsed - 1);
+			Bucket *bucket = &ht->arData[randval];
+			if (!Z_ISUNDEF(bucket->val)) {
+				if (bucket->key) {
+					RETURN_STR_COPY(bucket->key);
+				} else {
+					RETURN_LONG(bucket->h);
+				}
+			}
+		} while (1);
+	}
+
+	if (num_req <= 0 || num_req > num_avail) {
+		ORNG_COMPAT_RETURN_ERROR_OR_THROW_ARRAY_RAND_AVAIL();
+	}
+
+	/* Make the return value an array only if we need to pass back more than one result. */
+	array_init_size(return_value, (uint32_t)num_req);
+	if (num_req > (num_avail >> 1)) {
+		negative_bitset = 1;
+		num_req = num_avail - num_req;
+	}
+
+	bitset_len = zend_bitset_len(num_avail);
+	bitset = ZEND_BITSET_ALLOCA(bitset_len, use_heap);
+	zend_bitset_clear(bitset, bitset_len);
+
+	i = num_req;
+	while (i) {
+		zend_long randval = orng_rng_common_util_range32(obj->common, 0, num_avail - 1);
+		if (!zend_bitset_in(bitset, randval)) {
+			zend_bitset_incl(bitset, randval);
+			i--;
+		}
+	}
+	/* i = 0; */
+
+	zend_hash_real_init_packed(Z_ARRVAL_P(return_value));
+	ZEND_HASH_FILL_PACKED(Z_ARRVAL_P(return_value)) {
+		zval zv;
+		/* We can't use zend_hash_index_find()
+		 * because the array may have string keys or gaps. */
+		ZEND_HASH_FOREACH_KEY(Z_ARRVAL_P(input), num_key, string_key) {
+			if (zend_bitset_in(bitset, i) ^ negative_bitset) {
+				if (string_key) {
+					// ZEND_HASH_FILL_SET_STR_COPY(string_key);
+					ZVAL_STR_COPY(&zv, string_key);
+				} else {
+					// ZEND_HASH_FILL_SET_LONG(num_key);
+					ZVAL_LONG(&zv, num_key);
+				}
+				// ZEND_HASH_FILL_NEXT();
+				ZEND_HASH_FILL_ADD(&zv);
+			}
+			i++;
+		} ZEND_HASH_FOREACH_END();
+	} ZEND_HASH_FILL_END();
+
+	free_alloca(bitset, use_heap);
+}
+/* }}} */
+
+/* {{{ \ORNG\ORNG_MT19937::strShuffle(string $string): string */
+PHP_METHOD(ORNG_MT19937, strShuffle)
+{
+	zend_string *arg;
+
+	ZEND_PARSE_PARAMETERS_START(1, 1)
+		Z_PARAM_STR(arg)
+	ZEND_PARSE_PARAMETERS_END();
+
+	RETVAL_STRINGL(ZSTR_VAL(arg), ZSTR_LEN(arg));
+
+	ORNG_MT19937_obj *obj = Z_ORNG_MT19937_P(getThis());
+
+	if (Z_STRLEN_P(return_value) > 1) {
+		orng_rng_common_util_string_shuffle(obj->common, Z_STRVAL_P(return_value), (zend_long) Z_STRLEN_P(return_value));
+	}
 }
 /* }}} */
 
