@@ -5,4 +5,5 @@ return [
     \ORNG\XorShift128Plus::class,
     \ORNG\MT19937::class,
     \ORNG\MT19937PHP::class,
+    \ORNG\MT19937MB::class,
 ];

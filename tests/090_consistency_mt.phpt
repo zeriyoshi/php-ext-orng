@@ -9,7 +9,7 @@ if (!extension_loaded('orng')) {
 --FILE--
 <?php
 
-foreach (include('data/mt.inc') as $seed => $values) {
+foreach (include('data/tables/mt.inc') as $seed => $values) {
     $rng = new \ORNG\MT19937($seed);
     foreach ($values as $value) {
         $next = $rng->next();

@@ -28,3 +28,5 @@ Warning: ORNG\XorShift128Plus::range(): max(1) is smaller than min(10) in %s on 
 Warning: ORNG\MT19937::range(): max(1) is smaller than min(10) in %s on line %d
 
 Warning: ORNG\MT19937PHP::range(): max(1) is smaller than min(10) in %s on line %d
+
+Warning: ORNG\MT19937MB::range(): max(1) is smaller than min(10) in %s on line %d

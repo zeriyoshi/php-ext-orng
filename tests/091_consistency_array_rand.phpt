@@ -9,7 +9,7 @@ if (!extension_loaded('orng')) {
 --FILE--
 <?php
 
-[$seed, $range_min, $range_max, $pick_array_key, $multi_pick_array_keys, $multi_pick_num] = include('data/array_rand_rand.inc');
+[$seed, $range_min, $range_max, $pick_array_key, $multi_pick_array_keys, $multi_pick_num] = include('data/tables/array_rand_rand.inc');
 $generated_array = range($range_min, $range_max);
 $rng = new \ORNG\GLibCRand($seed);
 foreach ($pick_array_key as $i => $correct) {

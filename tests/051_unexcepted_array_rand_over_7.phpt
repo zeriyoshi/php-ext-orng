@@ -32,3 +32,5 @@ Warning: ORNG\XorShift128Plus::arrayRand(): Second argument has to be between 1 
 Warning: ORNG\MT19937::arrayRand(): Second argument has to be between 1 and the number of elements in the array in %s on line %d
 
 Warning: ORNG\MT19937PHP::arrayRand(): Second argument has to be between 1 and the number of elements in the array in %s on line %d
+
+Warning: ORNG\MT19937MB::arrayRand(): Second argument has to be between 1 and the number of elements in the array in %s on line %d

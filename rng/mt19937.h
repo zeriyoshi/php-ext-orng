@@ -26,6 +26,7 @@
 
 extern PHPAPI zend_class_entry *ce_ORNG_MT19937;
 extern PHPAPI zend_class_entry *ce_ORNG_MT19937PHP;
+extern PHPAPI zend_class_entry *ce_ORNG_MT19937MB;
 
 # define ORNG_MT19937_MT_RAND_MAX ((zend_long) (0x7FFFFFFF))
 
@@ -34,6 +35,7 @@ extern PHPAPI zend_class_entry *ce_ORNG_MT19937PHP;
 
 # define ORNG_MT19937_MODE_NORMAL      0
 # define ORNG_MT19937_MODE_PHP         1
+# define ORNG_MT19937_MODE_MB          2
 
 # define ORNG_MT19937_N                (624)
 # define ORNG_MT19937_M                (397)
@@ -50,7 +52,7 @@ typedef struct _ORNG_MT19937_obj {
 	uint32_t *next;
 	int left;
 	zend_long mode;
-  orng_rng_common *common;
+	orng_rng_common *common;
 	zend_object std;
 } ORNG_MT19937_obj;
 

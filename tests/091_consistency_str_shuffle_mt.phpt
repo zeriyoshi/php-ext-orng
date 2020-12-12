@@ -9,7 +9,7 @@ if (!extension_loaded('orng')) {
 --FILE--
 <?php
 
-[$seed, $base_strings, $shuffled_strings] = include('data/str_shuffle_mt.inc');
+[$seed, $base_strings, $shuffled_strings] = include('data/tables/str_shuffle_mt.inc');
 $generated_strings = (new \ORNG\MT19937($seed))->strShuffle($base_strings);
 if ($shuffled_strings !== $generated_strings) {
     die("NG, MT19937 generated incorrect results.");

@@ -32,3 +32,5 @@ Warning: ORNG\XorShift128Plus::arrayRand(): Array is empty in %s on line %d
 Warning: ORNG\MT19937::arrayRand(): Array is empty in %s on line %d
 
 Warning: ORNG\MT19937PHP::arrayRand(): Array is empty in %s on line %d
+
+Warning: ORNG\MT19937MB::arrayRand(): Array is empty in %s on line %d

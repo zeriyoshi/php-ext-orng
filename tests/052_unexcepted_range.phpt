@@ -41,3 +41,7 @@ ValueError: ORNG\MT19937PHP::range(): Argument #2 ($max) must be greater than or
 Stack trace:
 #0 %s(%d): ORNG\MT19937PHP->range(10, 1)
 #1 {main}
+ValueError: ORNG\MT19937MB::range(): Argument #2 ($max) must be greater than or equal to argument #1 ($min) in %s:%d
+Stack trace:
+#0 %s(%d): ORNG\MT19937MB->range(10, 1)
+#1 {main}

@@ -37,9 +37,11 @@
 # include "mt19937_arginfo_7.h"
 #endif
 // Note: "mt19937php_arghinfo.h" is not required.
+// Note: "mt19937mb_arginfo.h" is not required.
 
 PHPAPI zend_class_entry *ce_ORNG_MT19937;
 PHPAPI zend_class_entry *ce_ORNG_MT19937PHP;
+PHPAPI zend_class_entry *ce_ORNG_MT19937MB;
 
 static zend_object_handlers oh_MT19937;
 
@@ -62,22 +64,150 @@ static inline void internal_mt_reload(ORNG_MT19937_obj *obj)
 	register uint32_t *p = s;
 	register int i;
 
-	if (obj->mode == ORNG_MT19937_MODE_NORMAL) {
-		for (i = ORNG_MT19937_N - ORNG_MT19937_M; i--; ++p)
-			*p = ORNG_MT19937_twist(p[ORNG_MT19937_M], p[0], p[1]);
-		for (i = ORNG_MT19937_M; --i; ++p)
-			*p = ORNG_MT19937_twist(p[ORNG_MT19937_M-ORNG_MT19937_N], p[0], p[1]);
-		*p = ORNG_MT19937_twist(p[ORNG_MT19937_M-ORNG_MT19937_N], p[0], s[0]);
-	}
-	else {
-		for (i = ORNG_MT19937_N - ORNG_MT19937_M; i--; ++p)
-			*p = ORNG_MT19937_twist_php(p[ORNG_MT19937_M], p[0], p[1]);
-		for (i = ORNG_MT19937_M; --i; ++p)
-			*p = ORNG_MT19937_twist_php(p[ORNG_MT19937_M-ORNG_MT19937_N], p[0], p[1]);
-		*p = ORNG_MT19937_twist_php(p[ORNG_MT19937_M-ORNG_MT19937_N], p[0], s[0]);
+	switch (obj->mode) {
+		case ORNG_MT19937_MODE_PHP:
+			for (i = ORNG_MT19937_N - ORNG_MT19937_M; i--; ++p)
+				*p = ORNG_MT19937_twist_php(p[ORNG_MT19937_M], p[0], p[1]);
+			for (i = ORNG_MT19937_M; --i; ++p)
+				*p = ORNG_MT19937_twist_php(p[ORNG_MT19937_M-ORNG_MT19937_N], p[0], p[1]);
+			*p = ORNG_MT19937_twist_php(p[ORNG_MT19937_M-ORNG_MT19937_N], p[0], s[0]);
+			break;
+		default:
+			for (i = ORNG_MT19937_N - ORNG_MT19937_M; i--; ++p)
+				*p = ORNG_MT19937_twist(p[ORNG_MT19937_M], p[0], p[1]);
+			for (i = ORNG_MT19937_M; --i; ++p)
+				*p = ORNG_MT19937_twist(p[ORNG_MT19937_M-ORNG_MT19937_N], p[0], p[1]);
+			*p = ORNG_MT19937_twist(p[ORNG_MT19937_M-ORNG_MT19937_N], p[0], s[0]);
+			break;
 	}
 	obj->left = ORNG_MT19937_N;
 	obj->next = s;
+}
+
+// from upstream: https://github.com/php/php-src/blob/PHP-7.1/ext/standard/mt_rand.c#L214
+static inline zend_long internal_mb_rand_range(orng_rng_common *c, zend_long min, zend_long max)
+{
+	zend_ulong umax = max - min;
+	zend_ulong limit;
+	zend_ulong result;
+
+	result = c->next32(c);
+#if ZEND_ULONG_MAX > UINT32_MAX
+	if (umax > UINT32_MAX) {
+		result = (result << 32) | c->next32(c);
+	}
+#endif
+
+	/* Special case where no modulus is required */
+	if (UNEXPECTED(umax == ZEND_ULONG_MAX)) {
+		return (zend_long)result;
+	}
+
+	/* Increment the max so the range is inclusive of max */
+	umax++;
+
+	/* Powers of two are not biased */
+	if (EXPECTED((umax & (umax - 1)) != 0)) {
+		/* Ceiling under which ZEND_LONG_MAX % max == 0 */
+		limit = ZEND_ULONG_MAX - (ZEND_ULONG_MAX % umax) - 1;
+
+		/* Discard numbers over the limit to avoid modulo bias */
+		while (UNEXPECTED(result > limit)) {
+#if ZEND_ULONG_MAX > UINT32_MAX
+			if (umax > UINT32_MAX) {
+				result = (result << 32) | c->next32(c);
+			}
+			else {
+				result = c->next32(c);
+			}
+#else
+			result = c->next32(c);
+#endif
+		}
+	}
+
+	return (zend_long)((result % umax) + min);
+}
+
+// from upstream: https://github.com/php/php-src/blob/PHP-7.1/ext/standard/array.c#L2304
+static inline void internal_mb_array_data_shuffle(orng_rng_common *obj, zval *array)
+{
+	uint32_t idx, j, n_elems;
+	Bucket *p, temp;
+	HashTable *hash;
+	zend_long rnd_idx;
+	zend_long n_left;
+
+	n_elems = zend_hash_num_elements(Z_ARRVAL_P(array));
+
+	if (n_elems < 1) {
+		return;
+	}
+
+	hash = Z_ARRVAL_P(array);
+	n_left = n_elems;
+
+	if (EXPECTED(hash->u.v.nIteratorsCount == 0)) {
+		if (hash->nNumUsed != hash->nNumOfElements) {
+			for (j = 0, idx = 0; idx < hash->nNumUsed; idx++) {
+				p = hash->arData + idx;
+				if (Z_TYPE(p->val) == IS_UNDEF) continue;
+				if (j != idx) {
+					hash->arData[j] = *p;
+				}
+				j++;
+			}
+		}
+		while (--n_left) {
+			rnd_idx = internal_mb_rand_range(obj, 0, n_left);
+			if (rnd_idx != n_left) {
+				temp = hash->arData[n_left];
+				hash->arData[n_left] = hash->arData[rnd_idx];
+				hash->arData[rnd_idx] = temp;
+			}
+		}
+	} else {
+		uint32_t iter_pos = zend_hash_iterators_lower_pos(hash, 0);
+
+		if (hash->nNumUsed != hash->nNumOfElements) {
+			for (j = 0, idx = 0; idx < hash->nNumUsed; idx++) {
+				p = hash->arData + idx;
+				if (Z_TYPE(p->val) == IS_UNDEF) continue;
+				if (j != idx) {
+					hash->arData[j] = *p;
+					if (idx == iter_pos) {
+						zend_hash_iterators_update(hash, idx, j);
+						iter_pos = zend_hash_iterators_lower_pos(hash, iter_pos + 1);
+					}
+				}
+				j++;
+			}
+		}
+		while (--n_left) {
+			rnd_idx = internal_mb_rand_range(obj, 0, n_left);
+			if (rnd_idx != n_left) {
+				temp = hash->arData[n_left];
+				hash->arData[n_left] = hash->arData[rnd_idx];
+				hash->arData[rnd_idx] = temp;
+				zend_hash_iterators_update(hash, (uint32_t)rnd_idx, n_left);
+			}
+		}
+	}
+	hash->nNumUsed = n_elems;
+	hash->nInternalPointer = 0;
+
+	for (j = 0; j < n_elems; j++) {
+		p = hash->arData + j;
+		if (p->key) {
+			zend_string_release(p->key);
+		}
+		p->h = j;
+		p->key = NULL;
+	}
+	hash->nNextFreeElement = n_elems;
+	if (!(hash->u.flags & HASH_FLAG_PACKED)) {
+		zend_hash_to_packed(hash);
+	}
 }
 
 static uint32_t next32(orng_rng_common *c)
@@ -119,6 +249,18 @@ static zend_object *create_object_php(zend_class_entry *ce)
 	object_properties_init(&obj->std, ce);
 	obj->std.handlers = &oh_MT19937;
 	obj->mode = ORNG_MT19937_MODE_PHP;
+	return &obj->std;
+}
+
+static zend_object *create_object_mb(zend_class_entry *ce)
+{
+	ORNG_MT19937_obj *obj = (ORNG_MT19937_obj*)ecalloc(1, sizeof(ORNG_MT19937_obj) + zend_object_properties_size(ce));
+	orng_rng_common *c = orng_rng_common_initialize(next32, NULL, obj);
+	obj->common = c;
+	zend_object_std_init(&obj->std, ce);
+	object_properties_init(&obj->std, ce);
+	obj->std.handlers = &oh_MT19937;
+	obj->mode = ORNG_MT19937_MODE_MB;
 	return &obj->std;
 }
 
@@ -190,13 +332,20 @@ PHP_METHOD(ORNG_MT19937, range)
 
 	ORNG_MT19937_obj *obj = Z_ORNG_MT19937_P(getThis());
 
-	if (obj->mode == ORNG_MT19937_MODE_PHP) {
-		int64_t n = (int64_t) obj->common->next32(obj->common) >> 1;
-		ORNG_MT19937_RAND_RANGE_BADSCALING(n, min, max, ORNG_MT19937_MT_RAND_MAX);
-		RETURN_LONG((zend_long) n);
+	int64_t n;
+	switch (obj->mode) {
+		case ORNG_MT19937_MODE_PHP:
+			n = (int64_t) obj->common->next32(obj->common) >> 1;
+			ORNG_MT19937_RAND_RANGE_BADSCALING(n, min, max, ORNG_MT19937_MT_RAND_MAX);
+			RETURN_LONG((zend_long) n);
+			break;
+		case ORNG_MT19937_MODE_MB:
+			RETURN_LONG(internal_mb_rand_range(obj->common, min, max));
+			break;
+		default:
+			RETURN_LONG(orng_rng_common_util_rand_range(obj->common, min, max));
+			break;
 	}
-
-	RETURN_LONG(orng_rng_common_util_range(obj->common, min, max));
 }
 /* }}} */
 
@@ -211,8 +360,12 @@ PHP_METHOD(ORNG_MT19937, shuffle)
 
 	ORNG_MT19937_obj *obj = Z_ORNG_MT19937_P(getThis());
 
-	orng_rng_common_util_array_data_shuffle(obj->common, array);
-
+	if (obj->mode == ORNG_MT19937_MODE_MB) {
+		internal_mb_array_data_shuffle(obj->common, array);
+	} else {
+		orng_rng_common_util_array_data_shuffle(obj->common, array);
+	}
+	
 	RETURN_TRUE;
 }
 /* }}} */
@@ -252,7 +405,13 @@ PHP_METHOD(ORNG_MT19937, arrayRand)
 		if ((uint32_t)num_avail < ht->nNumUsed - (ht->nNumUsed>>1)) {
 			/* If less than 1/2 of elements are used, don't sample. Instead search for a
 			 * specific offset using linear scan. */
-			zend_long i = 0, randval = orng_rng_common_util_range32(obj->common, 0, num_avail - 1);
+			zend_long i = 0;
+			zend_long randval;
+			if (obj->mode == ORNG_MT19937_MODE_MB) {
+				randval = internal_mb_rand_range(obj->common, 0, num_avail - 1);
+			} else {
+				randval = orng_rng_common_util_rand_range(obj->common, 0, num_avail - 1);
+			}
 			ZEND_HASH_FOREACH_KEY(Z_ARRVAL_P(input), num_key, string_key) {
 				if (i == randval) {
 					if (string_key) {
@@ -270,7 +429,12 @@ PHP_METHOD(ORNG_MT19937, arrayRand)
 		 * probability of hitting N empty elements in a row is (1-1/2)**N.
 		 * For N=10 this becomes smaller than 0.1%. */
 		do {
-			zend_long randval = orng_rng_common_util_range32(obj->common, 0, ht->nNumUsed - 1);
+			zend_long randval;
+			if (obj->mode == ORNG_MT19937_MODE_MB) {
+				randval = internal_mb_rand_range(obj->common, 0, ht->nNumUsed - 1);
+			} else {
+				randval = orng_rng_common_util_rand_range(obj->common, 0, ht->nNumUsed - 1);
+			}
 			Bucket *bucket = &ht->arData[randval];
 			if (!Z_ISUNDEF(bucket->val)) {
 				if (bucket->key) {
@@ -299,7 +463,12 @@ PHP_METHOD(ORNG_MT19937, arrayRand)
 
 	i = num_req;
 	while (i) {
-		zend_long randval = orng_rng_common_util_range32(obj->common, 0, num_avail - 1);
+		zend_long randval;
+		if (obj->mode == ORNG_MT19937_MODE_MB) {
+			randval = internal_mb_rand_range(obj->common, 0, num_avail - 1);
+		} else {
+			randval = orng_rng_common_util_rand_range(obj->common, 0, num_avail - 1);
+		}
 		if (!zend_bitset_in(bitset, randval)) {
 			zend_bitset_incl(bitset, randval);
 			i--;
@@ -353,7 +522,7 @@ PHP_METHOD(ORNG_MT19937, strShuffle)
 
 PHP_MINIT_FUNCTION(orng_rng_mt19937)
 {
-	zend_class_entry ce, ce2;
+	zend_class_entry ce;
 	INIT_CLASS_ENTRY(ce, ORNG_RNG_FQN(MT19937), class_ORNG_MT19937_methods);
 	ce_ORNG_MT19937 = zend_register_internal_class(&ce);
 	zend_class_implements(ce_ORNG_MT19937, 1, orng_ce_ORNG_RNGInterface);
@@ -362,11 +531,18 @@ PHP_MINIT_FUNCTION(orng_rng_mt19937)
 	oh_MT19937.offset = XtOffsetOf(ORNG_MT19937_obj, std);
 	oh_MT19937.clone_obj = ORNG_COMPAT_RNG_CLONE(MT19937);
 	oh_MT19937.free_obj = free_object;
-
+	
+	zend_class_entry ce2;
 	INIT_CLASS_ENTRY(ce2, ORNG_RNG_FQN(MT19937PHP), class_ORNG_MT19937_methods);
 	ce_ORNG_MT19937PHP = zend_register_internal_class(&ce2);
 	zend_class_implements(ce_ORNG_MT19937PHP, 1, orng_ce_ORNG_RNGInterface);
 	ce_ORNG_MT19937PHP->create_object = create_object_php;
+
+	zend_class_entry ce3;
+	INIT_CLASS_ENTRY(ce3, ORNG_RNG_FQN(MT19937MB), class_ORNG_MT19937_methods);
+	ce_ORNG_MT19937MB = zend_register_internal_class(&ce3);
+	zend_class_implements(ce_ORNG_MT19937MB, 1, orng_ce_ORNG_RNGInterface);
+	ce_ORNG_MT19937MB->create_object = create_object_mb;
 
 	return SUCCESS;
 }

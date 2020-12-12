@@ -41,3 +41,7 @@ ValueError: ORNG\MT19937PHP::arrayRand(): Argument #2 ($num) must be between 1 a
 Stack trace:
 #0 %s(%d): ORNG\MT19937PHP->arrayRand(Array, 2)
 #1 {main}
+ValueError: ORNG\MT19937MB::arrayRand(): Argument #2 ($num) must be between 1 and the number of elements in argument #1 ($array) in %s:%d
+Stack trace:
+#0 %s(%d): ORNG\MT19937MB->arrayRand(Array, 2)
+#1 {main}
