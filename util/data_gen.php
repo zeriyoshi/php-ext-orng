@@ -20,7 +20,7 @@ $informations = [
 ];
 
 echo "--------------------------------------------------\n" .
-     "orng Data Generator\n" .
+     "orng Result Table Data Generator\n" .
      "--------------------------------------------------\n";
 foreach ($informations as $category => $values) {
     echo "${category} informations:\n";
@@ -35,35 +35,12 @@ if ($output_dir === null || ! is_dir($output_dir)) {
     exit(3);
 }
 
-switch ($target) {
-    case 'rand':
-        exit(rand_generate($output_dir));
-    case 'shuffle_rand':
-        exit(shuffle_rand_generate($output_dir));
-    case 'array_rand_rand':
-        exit(array_rand_rand_generate($output_dir));
-    case 'str_shuffle_rand':
-        exit(str_shuffle_rand_generate($output_dir));
-    case 'mt_php':
-        exit(mt_php_generate($output_dir));
-    case 'mt':
-        exit(mt_generate($output_dir));
-    case 'shuffle_mt':
-        exit(shuffle_mt_generate($output_dir));
-    case 'array_rand_mt':
-        exit(array_rand_mt_generate($output_dir));
-    case 'str_shuffle_mt':
-        exit(str_shuffle_mt_generate($output_dir));
-    case 'mt_mb':
-        exit(mt_mb_generate($output_dir));
-    case 'shuffle_mt_mb':
-        exit(shuffle_mt_mb_generate($output_dir));
-    case 'array_rand_mt_mb':
-        exit(array_rand_mt_mb_generate($output_dir));
-    default:
-        echo "ERROR: Invalid target: ${target}\n";
-        exit(4);
+if (! function_exists("${target}_generate")) {
+    echo "ERROR: Invalid target: ${target}\n";
+    exit(4);
 }
+
+exit(call_user_func("${target}_generate", $output_dir));
 
 function php_wrap(string $php_code): string {
     return "<?php return ${php_code};";
