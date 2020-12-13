@@ -115,16 +115,19 @@ ORNG_COMPAT_RNG_CLONE_FUNCTION(XorShift128Plus)
 PHP_METHOD(ORNG_XorShift128Plus, __construct)
 {
 	zend_long seed;
+	uint64_t s;
 	int i;
 
 	ZEND_PARSE_PARAMETERS_START(1, 1)
 		Z_PARAM_LONG(seed);
 	ZEND_PARSE_PARAMETERS_END();
 
+	s = (uint64_t) seed;
+
 	ORNG_XorShift128Plus_obj *obj = Z_XorShift128Plus_P(getThis());
 
-	obj->s[0] = internal_splitmix64_next(&seed);
-	obj->s[1] = internal_splitmix64_next(&seed);
+	obj->s[0] = internal_splitmix64_next(&s);
+	obj->s[1] = internal_splitmix64_next(&s);
 }
 /* }}} */
 
