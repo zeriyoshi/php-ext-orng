@@ -27,6 +27,6 @@ foreach ($classes as $class) {
     }
 }
 die('OK, All array shuffled.');
-
+?>
 --EXPECT--
 OK, All array shuffled.

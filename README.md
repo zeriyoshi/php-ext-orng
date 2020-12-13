@@ -29,6 +29,11 @@ interface \ORNG\RNGInterface
   public function next(): int;
 
   /**
+   * Generate next random number (64bit range).
+   */
+  public function next64(): int;
+
+  /**
    * Generate random number in range.
    */
   public function range(int $min, int $max): int;
@@ -89,18 +94,18 @@ if ($rng_first === $rng2_first) {
 }
 
 /*
-First generated number by $rng: 9158675354017783308
-  1: genrated by $rng: 1441971726010927065
-  2: genrated by $rng: 7969781667560663344
-  3: genrated by $rng: 7634556340589501701
-  4: genrated by $rng: 6091974329639073515
-  5: genrated by $rng: 2182242786293063306
-  6: genrated by $rng: 6432679252689450613
-  7: genrated by $rng: 6376292334233783764
-  8: genrated by $rng: 7389635648749466789
-  9: genrated by $rng: 1149666737513751008
-  10: genrated by $rng: 705725663761726164
-First generated number by $rng2: 9158675354017783308
+First generated number by $rng: 1656077336
+  1: genrated by $rng: 840142771
+  2: genrated by $rng: 1623151200
+  3: genrated by $rng: 353778187
+  4: genrated by $rng: 366931415
+  5: genrated by $rng: 357580052
+  6: genrated by $rng: 623439083
+  7: genrated by $rng: 471473064
+  8: genrated by $rng: 1854728523
+  9: genrated by $rng: 1999487937
+  10: genrated by $rng: 315225512
+First generated number by $rng2: 1656077336
 object-scope confirmed.
 */
 ```

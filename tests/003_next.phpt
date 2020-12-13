@@ -26,6 +26,14 @@ foreach ($classes as $class) {
             }
         }
     }
+    foreach (range(1, 1000) as $i) {
+        $next64 = $origin->next64();
+        foreach ($children as $child) {
+            if ($child->next64() !== $next64) {
+                die("NG, polltion detected (64) in ${class} (count: ${i})");
+            }
+        }
+    }
 }
 die('OK, pollution is NOT detected.');
 ?>

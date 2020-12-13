@@ -16,5 +16,6 @@ if ($shuffled_strings !== $generated_strings) {
 }
 
 die('OK, GLibCRand results correctly.');
+?>
 --EXPECT--
 OK, GLibCRand results correctly.

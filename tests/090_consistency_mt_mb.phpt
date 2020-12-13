@@ -19,5 +19,6 @@ foreach ($values as $value) {
 }
 
 die('OK, MT19937MB results correctly.');
+?>
 --EXPECT--
 OK, MT19937MB results correctly.

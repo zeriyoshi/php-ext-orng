@@ -24,5 +24,6 @@ foreach ($classes as $class) {
     }
 }
 die('OK, range is working correctly.');
+?>
 --EXPECT--
 OK, range is working correctly.
