@@ -20,5 +20,6 @@ foreach (include('data/tables/rand.inc') as $seed => $values) {
 }
 
 die('OK, GLibCrand results correctly.');
+?>
 --EXPECT--
 OK, GLibCrand results correctly.

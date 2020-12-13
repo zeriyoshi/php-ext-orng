@@ -20,5 +20,6 @@ foreach (include('data/tables/mt_php.inc') as $seed => $values) {
 }
 
 die('OK, MT19937PHP results correctly.');
+?>
 --EXPECT--
 OK, MT19937PHP results correctly.

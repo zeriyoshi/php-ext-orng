@@ -29,5 +29,6 @@ foreach ($multi_pick_array_keys as $corrects) {
 } 
 
 die('OK, MT19937 results correctly.');
+?>
 --EXPECT--
 OK, MT19937 results correctly.

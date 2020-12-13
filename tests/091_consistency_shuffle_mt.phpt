@@ -21,5 +21,6 @@ for ($i = $range_min; $i < $range_max; $i++) {
 }
 
 die('OK, MT19937 results correctly.');
+?>
 --EXPECT--
 OK, MT19937 results correctly.

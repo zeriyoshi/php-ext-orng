@@ -16,5 +16,6 @@ if ($shuffled_strings !== $generated_strings) {
 }
 
 die('OK, MT19937 results correctly.');
+?>
 --EXPECT--
 OK, MT19937 results correctly.

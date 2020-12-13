@@ -21,5 +21,6 @@ for ($i = $range_min; $i < $range_max; $i++) {
 }
 
 die('OK, GLibCRand results correctly.');
+?>
 --EXPECT--
 OK, GLibCRand results correctly.

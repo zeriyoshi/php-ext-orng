@@ -29,5 +29,6 @@ foreach ($multi_pick_array_keys as $corrects) {
 } 
 
 die('OK, GLibCRand results correctly.');
+?>
 --EXPECT--
 OK, GLibCRand results correctly.

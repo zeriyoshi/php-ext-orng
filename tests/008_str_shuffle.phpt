@@ -25,6 +25,6 @@ foreach ($classes as $class) {
     die("NG, String not shuffled. class: ${class} string: ${shuffled_string}");
 }
 die('OK, All string shuffled.');
-
+?>
 --EXPECT--
 OK, All string shuffled.

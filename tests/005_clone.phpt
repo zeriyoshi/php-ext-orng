@@ -25,5 +25,6 @@ foreach ($classes as $class) {
     }
 }
 die('OK, state is cloned correctly.');
+?>
 --EXPECT--
 OK, state is cloned correctly.

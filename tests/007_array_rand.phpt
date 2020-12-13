@@ -37,5 +37,6 @@ foreach ($classes as $class) {
     }
 }
 die('OK, All works correctly.');
+?>
 --EXPECT--
 OK, All works correctly.
