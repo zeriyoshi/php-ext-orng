@@ -40,117 +40,6 @@ PHPAPI zend_class_entry *ce_ORNG_GLibCRand;
 
 static zend_object_handlers oh_GLibCRand;
 
-// from upstream: https://github.com/php/php-src/blob/PHP-7.0/ext/standard/array.c#L2249
-static void internal_array_data_shuffle(orng_rng_common *c, zval *array)
-{
-	uint32_t idx, j, n_elems;
-	Bucket *p, temp;
-	HashTable *hash;
-	zend_long rnd_idx;
-	uint32_t n_left;
-
-	n_elems = zend_hash_num_elements(Z_ARRVAL_P(array));
-
-	if (n_elems < 1) {
-		return;
-	}
-
-	hash = Z_ARRVAL_P(array);
-	n_left = n_elems;
-
-	if (EXPECTED(hash->u.v.nIteratorsCount == 0)) {
-		if (hash->nNumUsed != hash->nNumOfElements) {
-			for (j = 0, idx = 0; idx < hash->nNumUsed; idx++) {
-				p = hash->arData + idx;
-				if (Z_TYPE(p->val) == IS_UNDEF) continue;
-				if (j != idx) {
-					hash->arData[j] = *p;
-				}
-				j++;
-			}
-		}
-		while (--n_left) {
-			rnd_idx = c->next32(c);
-			ORNG_GLIBCRAND_RAND_RANGE(rnd_idx, 0, n_left, ORNG_GLIBCRAND_RAND_MAX);
-			if (rnd_idx != n_left) {
-				temp = hash->arData[n_left];
-				hash->arData[n_left] = hash->arData[rnd_idx];
-				hash->arData[rnd_idx] = temp;
-			}
-		}
-	} else {
-		uint32_t iter_pos = zend_hash_iterators_lower_pos(hash, 0);
-
-		if (hash->nNumUsed != hash->nNumOfElements) {
-			for (j = 0, idx = 0; idx < hash->nNumUsed; idx++) {
-				p = hash->arData + idx;
-				if (Z_TYPE(p->val) == IS_UNDEF) continue;
-				if (j != idx) {
-					hash->arData[j] = *p;
-					if (idx == iter_pos) {
-						zend_hash_iterators_update(hash, idx, j);
-						iter_pos = zend_hash_iterators_lower_pos(hash, iter_pos + 1);
-					}
-				}
-				j++;
-			}
-		}
-		while (--n_left) {
-			rnd_idx = c->next32(c);
-			ORNG_GLIBCRAND_RAND_RANGE(rnd_idx, 0, n_left, ORNG_GLIBCRAND_RAND_MAX);
-			if (rnd_idx != n_left) {
-				temp = hash->arData[n_left];
-				hash->arData[n_left] = hash->arData[rnd_idx];
-				hash->arData[rnd_idx] = temp;
-				zend_hash_iterators_update(hash, (uint32_t)rnd_idx, n_left);
-			}
-		}
-	}
-	HANDLE_BLOCK_INTERRUPTIONS();
-	hash->nNumUsed = n_elems;
-	hash->nInternalPointer = 0;
-
-	for (j = 0; j < n_elems; j++) {
-		p = hash->arData + j;
-		if (p->key) {
-			zend_string_release(p->key);
-		}
-		p->h = j;
-		p->key = NULL;
-	}
-	hash->nNextFreeElement = n_elems;
-	if (!(hash->u.flags & HASH_FLAG_PACKED)) {
-		zend_hash_to_packed(hash);
-	}
-	HANDLE_UNBLOCK_INTERRUPTIONS();
-}
-
-// from upstream: https://github.com/php/php-src/blob/PHP-7.0/ext/standard/string.c#L5353
-static void internal_string_shuffle(orng_rng_common *c, char *str, zend_long len) /* {{{ */
-{
-	zend_long n_elems, rnd_idx, n_left;
-	char temp;
-	/* The implementation is stolen from array_data_shuffle       */
-	/* Thus the characteristics of the randomization are the same */
-	n_elems = len;
-
-	if (n_elems <= 1) {
-		return;
-	}
-
-	n_left = n_elems;
-
-	while (--n_left) {
-		rnd_idx = c->next32(c);
-		ORNG_GLIBCRAND_RAND_RANGE(rnd_idx, 0, n_left, ORNG_GLIBCRAND_RAND_MAX);
-		if (rnd_idx != n_left) {
-			temp = str[n_left];
-			str[n_left] = str[rnd_idx];
-			str[rnd_idx] = temp;
-		}
-	}
-}
-
 static uint32_t next32(orng_rng_common *c)
 {
 	unsigned int r;
@@ -163,10 +52,17 @@ static uint32_t next32(orng_rng_common *c)
 	return r;
 }
 
+static zend_long range(orng_rng_common *c, zend_long min, zend_long max)
+{
+	uint32_t n = c->next32(c);
+	ORNG_GLIBCRAND_RAND_RANGE(n, min, max, ORNG_GLIBCRAND_RAND_MAX);
+	return n;
+}
+
 static zend_object *create_object(zend_class_entry *ce)
 {
 	ORNG_GLibCRand_obj *obj = (ORNG_GLibCRand_obj*)ecalloc(1, sizeof(ORNG_GLibCRand_obj) + zend_object_properties_size(ce));
-	orng_rng_common *c = orng_rng_common_initialize(next32, NULL, obj);
+	orng_rng_common *c = orng_rng_common_initialize(next32, range, NULL, obj);
 	obj->common = c;
 	zend_object_std_init(&obj->std, ce);
 	object_properties_init(&obj->std, ce);
@@ -245,7 +141,7 @@ PHP_METHOD(ORNG_GLibCRand, next)
 /* {{{ \ORNG\GLibCRand::range(int $min, int $max): int */
 PHP_METHOD(ORNG_GLibCRand, range)
 {
-	zend_long min, max, n;
+	zend_long min, max;
 
 	ZEND_PARSE_PARAMETERS_START(2, 2)
 		Z_PARAM_LONG(min)
@@ -258,10 +154,7 @@ PHP_METHOD(ORNG_GLibCRand, range)
 
 	ORNG_GLibCRand_obj *obj = Z_ORNG_GLibCRand_P(getThis());
 
-	n = obj->common->next32(obj->common);
-	n = min + (zend_long) ((double) ((double) max - min + 1.0) * (n / (2147483647 + 1.0)));
-
-	RETURN_LONG(n);
+	RETURN_LONG(obj->common->range(obj->common, min, max));
 }
 /* }}} */
 
@@ -276,7 +169,7 @@ PHP_METHOD(ORNG_GLibCRand, shuffle)
 
 	ORNG_GLibCRand_obj *obj = Z_ORNG_GLibCRand_P(getThis());
 
-	internal_array_data_shuffle(obj->common, array);
+	orng_rng_common_util_array_data_shuffle(obj->common, array);
 
 	RETURN_TRUE;
 }
@@ -362,7 +255,7 @@ PHP_METHOD(ORNG_GLibCRand, strShuffle)
 	ORNG_GLibCRand_obj *obj = Z_ORNG_GLibCRand_P(getThis());
 
 	if (Z_STRLEN_P(return_value) > 1) {
-		internal_string_shuffle(obj->common, Z_STRVAL_P(return_value), (zend_long) Z_STRLEN_P(return_value));
+		orng_rng_common_util_string_shuffle(obj->common, Z_STRVAL_P(return_value), (zend_long) Z_STRLEN_P(return_value));
 	}
 }
 /* }}} */

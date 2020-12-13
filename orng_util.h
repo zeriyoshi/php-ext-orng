@@ -26,14 +26,20 @@ typedef struct _orng_rng_common orng_rng_common;
 
 typedef struct _orng_rng_common {
 	uint32_t (*next32)(orng_rng_common*);
+	zend_long (*range)(orng_rng_common*, zend_long, zend_long);
 	uint64_t (*next64)(orng_rng_common*);
 	void* obj;
 } orng_rng_common;
 
-static orng_rng_common* orng_rng_common_initialize(uint32_t (*next32)(orng_rng_common*), uint64_t (*next64)(orng_rng_common*), void *obj)
-{
+static orng_rng_common* orng_rng_common_initialize(
+	uint32_t (*next32)(orng_rng_common*),
+	zend_long (*range)(orng_rng_common*, zend_long, zend_long),
+	uint64_t (*next64)(orng_rng_common*),
+	void *obj
+) {
 	orng_rng_common *c = (orng_rng_common*)ecalloc(1, sizeof(orng_rng_common));
 	c->next32 = next32;
+	c->range = range;
 	c->next64 = next64;
 	c->obj = obj;
 
@@ -50,8 +56,10 @@ static uint64_t orng_rng_common_util_next64bynext32(orng_rng_common *common)
 	return r;
 }
 
+/* from upstream: https://github.com/php/php-src/blob/2b5de6f839feea0ae1d5289d59dd7f159fcdcc8c/ext/standard/mt_rand.c#L237 */
 # if ZEND_ULONG_MAX > UINT32_MAX
-static uint64_t orng_rng_common_util_rand_range64(orng_rng_common *c, uint64_t umax) {
+static uint64_t orng_rng_common_util_rand_range64(orng_rng_common *c, uint64_t umax)
+{
 	uint64_t result, limit;
 
 	if (c->next64 != NULL) {
@@ -90,7 +98,9 @@ static uint64_t orng_rng_common_util_rand_range64(orng_rng_common *c, uint64_t u
 }
 # endif
 
-static uint32_t orng_rng_common_util_rand_range32(orng_rng_common *c, uint32_t umax) {
+/* from upstream: https://github.com/php/php-src/blob/2b5de6f839feea0ae1d5289d59dd7f159fcdcc8c/ext/standard/mt_rand.c#L207 */
+static uint32_t orng_rng_common_util_rand_range32(orng_rng_common *c, uint32_t umax)
+{
 	uint32_t result, limit;
 
 	result = c->next32(c);
@@ -119,7 +129,7 @@ static uint32_t orng_rng_common_util_rand_range32(orng_rng_common *c, uint32_t u
 	return result % umax;
 }
 
-/* from upstream:  */
+/* from upstream: https://github.com/php/php-src/blob/2b5de6f839feea0ae1d5289d59dd7f159fcdcc8c/ext/standard/mt_rand.c#L270 */
 static zend_long orng_rng_common_util_rand_range(orng_rng_common *c, zend_long min, zend_long max)
 {
 	zend_ulong umax = max - min;
@@ -161,7 +171,7 @@ static void orng_rng_common_util_array_data_shuffle(orng_rng_common *c, zval *ar
 			}
 		}
 		while (--n_left) {
-			rnd_idx = orng_rng_common_util_rand_range(c, 0, n_left);
+			rnd_idx = c->range(c, 0, n_left);
 			if (rnd_idx != n_left) {
 				temp = hash->arData[n_left];
 				hash->arData[n_left] = hash->arData[rnd_idx];
@@ -186,7 +196,7 @@ static void orng_rng_common_util_array_data_shuffle(orng_rng_common *c, zval *ar
 			}
 		}
 		while (--n_left) {
-			rnd_idx = orng_rng_common_util_rand_range(c, 0, n_left);
+			rnd_idx = c->range(c, 0, n_left);
 			if (rnd_idx != n_left) {
 				temp = hash->arData[n_left];
 				hash->arData[n_left] = hash->arData[rnd_idx];
@@ -228,7 +238,7 @@ static void orng_rng_common_util_string_shuffle(orng_rng_common *c, char *str, z
 	n_left = n_elems;
 
 	while (--n_left) {
-		rnd_idx = orng_rng_common_util_rand_range(c, 0, n_left);
+		rnd_idx = c->range(c, 0, n_left);
 		if (rnd_idx != n_left) {
 			temp = str[n_left];
 			str[n_left] = str[rnd_idx];

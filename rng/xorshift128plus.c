@@ -71,10 +71,15 @@ static uint64_t next64(orng_rng_common *c)
 	return r;
 }
 
+static zend_long range(orng_rng_common *c, zend_long min, zend_long max)
+{
+	return orng_rng_common_util_rand_range(c, min, max);
+}
+
 static zend_object *create_object(zend_class_entry *ce)
 {
 	ORNG_XorShift128Plus_obj *obj = (ORNG_XorShift128Plus_obj*)ecalloc(1, sizeof(ORNG_XorShift128Plus_obj) + zend_object_properties_size(ce));
-	orng_rng_common *c = orng_rng_common_initialize(next32, next64, obj);
+	orng_rng_common *c = orng_rng_common_initialize(next32, range, next64, obj);
 	obj->common = c;
 	zend_object_std_init(&obj->std, ce);
 	object_properties_init(&obj->std, ce);
@@ -135,7 +140,6 @@ PHP_METHOD(ORNG_XorShift128Plus, next)
 PHP_METHOD(ORNG_XorShift128Plus, range)
 {
 	zend_long min, max;
-	zend_ulong umax;
 
 	ZEND_PARSE_PARAMETERS_START(2, 2)
 		Z_PARAM_LONG(min)
@@ -148,26 +152,24 @@ PHP_METHOD(ORNG_XorShift128Plus, range)
 
 	ORNG_XorShift128Plus_obj *obj = Z_XorShift128Plus_P(getThis());
 
-	RETURN_LONG(orng_rng_common_util_rand_range(obj->common, min, max));
+	RETURN_LONG(obj->common->range(obj->common, min, max));
 }
 /* }}} */
 
-/* {{{ \ORNG\XorShift128Plus::strShuffle(string $string): string */
-PHP_METHOD(ORNG_XorShift128Plus, strShuffle)
+/* {{{ \ORNG\XorShift128Plus::shuffle(array &$array): bool */
+PHP_METHOD(ORNG_XorShift128Plus, shuffle)
 {
-	zend_string *arg;
+	zval *array;
 
 	ZEND_PARSE_PARAMETERS_START(1, 1)
-		Z_PARAM_STR(arg)
+		Z_PARAM_ARRAY_EX(array, 0, 1)
 	ZEND_PARSE_PARAMETERS_END();
-
-	RETVAL_STRINGL(ZSTR_VAL(arg), ZSTR_LEN(arg));
 
 	ORNG_XorShift128Plus_obj *obj = Z_XorShift128Plus_P(getThis());
 
-	if (Z_STRLEN_P(return_value) > 1) {
-		orng_rng_common_util_string_shuffle(obj->common, Z_STRVAL_P(return_value), (zend_long) Z_STRLEN_P(return_value));
-	}
+	orng_rng_common_util_array_data_shuffle(obj->common, array);
+
+	RETURN_TRUE;
 }
 /* }}} */
 
@@ -206,7 +208,7 @@ PHP_METHOD(ORNG_XorShift128Plus, arrayRand)
 		if ((uint32_t)num_avail < ht->nNumUsed - (ht->nNumUsed>>1)) {
 			/* If less than 1/2 of elements are used, don't sample. Instead search for a
 			 * specific offset using linear scan. */
-			zend_long i = 0, randval = orng_rng_common_util_rand_range(obj->common, 0, num_avail - 1);
+			zend_long i = 0, randval = obj->common->range(obj->common, 0, num_avail - 1);
 			ZEND_HASH_FOREACH_KEY(Z_ARRVAL_P(input), num_key, string_key) {
 				if (i == randval) {
 					if (string_key) {
@@ -224,7 +226,7 @@ PHP_METHOD(ORNG_XorShift128Plus, arrayRand)
 		 * probability of hitting N empty elements in a row is (1-1/2)**N.
 		 * For N=10 this becomes smaller than 0.1%. */
 		do {
-			zend_long randval = orng_rng_common_util_rand_range(obj->common, 0, ht->nNumUsed - 1);
+			zend_long randval = obj->common->range(obj->common, 0, ht->nNumUsed - 1);
 			Bucket *bucket = &ht->arData[randval];
 			if (!Z_ISUNDEF(bucket->val)) {
 				if (bucket->key) {
@@ -253,7 +255,7 @@ PHP_METHOD(ORNG_XorShift128Plus, arrayRand)
 
 	i = num_req;
 	while (i) {
-		zend_long randval = orng_rng_common_util_rand_range(obj->common, 0, num_avail - 1);
+		zend_long randval = obj->common->range(obj->common, 0, num_avail - 1);
 		if (!zend_bitset_in(bitset, randval)) {
 			zend_bitset_incl(bitset, randval);
 			i--;
@@ -286,20 +288,22 @@ PHP_METHOD(ORNG_XorShift128Plus, arrayRand)
 }
 /* }}} */
 
-/* {{{ \ORNG\XorShift128Plus::shuffle(array &$array): bool */
-PHP_METHOD(ORNG_XorShift128Plus, shuffle)
+/* {{{ \ORNG\XorShift128Plus::strShuffle(string $string): string */
+PHP_METHOD(ORNG_XorShift128Plus, strShuffle)
 {
-	zval *array;
+	zend_string *arg;
 
 	ZEND_PARSE_PARAMETERS_START(1, 1)
-		Z_PARAM_ARRAY_EX(array, 0, 1)
+		Z_PARAM_STR(arg)
 	ZEND_PARSE_PARAMETERS_END();
+
+	RETVAL_STRINGL(ZSTR_VAL(arg), ZSTR_LEN(arg));
 
 	ORNG_XorShift128Plus_obj *obj = Z_XorShift128Plus_P(getThis());
 
-	orng_rng_common_util_array_data_shuffle(obj->common, array);
-
-	RETURN_TRUE;
+	if (Z_STRLEN_P(return_value) > 1) {
+		orng_rng_common_util_string_shuffle(obj->common, Z_STRVAL_P(return_value), (zend_long) Z_STRLEN_P(return_value));
+	}
 }
 /* }}} */
 
