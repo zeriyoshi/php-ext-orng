@@ -114,7 +114,7 @@ static zend_long range_php(orng_rng_common *c, zend_long min, zend_long max)
 	return (zend_long) n;
 }
 
-// from upstream: https://github.com/php/php-src/blob/PHP-7.1/ext/standard/mt_rand.c#L214
+/* from upstream: https://github.com/php/php-src/blob/PHP-7.1/ext/standard/mt_rand.c#L214 */
 static zend_long range_mb(orng_rng_common *c, zend_long min, zend_long max)
 {
 	zend_ulong umax = max - min;
@@ -254,6 +254,14 @@ PHP_METHOD(ORNG_MT19937, next)
 	ORNG_MT19937_obj *obj = Z_ORNG_MT19937_P(getThis());
 
 	RETURN_LONG(obj->common->next32(obj->common) >> 1);
+}
+/* }}} */
+
+/* {{{ \ORNG\ORNG_MT19937::next64(): int */
+PHP_METHOD(ORNG_MT19937, next64)
+{
+	ORNG_MT19937_obj *obj = Z_ORNG_MT19937_P(getThis());
+	RETURN_LONG(orng_rng_common_util_next64bynext32(obj->common) >> 1);
 }
 /* }}} */
 

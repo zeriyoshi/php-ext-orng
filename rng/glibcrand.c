@@ -138,6 +138,14 @@ PHP_METHOD(ORNG_GLibCRand, next)
 }
 /* }}} */
 
+/* {{{ \ORNG\GLibCRand::next64(): int */
+PHP_METHOD(ORNG_GLibCRand, next64)
+{
+	ORNG_GLibCRand_obj *obj = Z_ORNG_GLibCRand_P(getThis());
+	RETURN_LONG(orng_rng_common_util_next64bynext32(obj->common) >> 1);
+}
+/* }}} */
+
 /* {{{ \ORNG\GLibCRand::range(int $min, int $max): int */
 PHP_METHOD(ORNG_GLibCRand, range)
 {

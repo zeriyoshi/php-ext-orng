@@ -5,6 +5,8 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_ORNG_XorShift128Plus_next, 0, 0, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
+#define arginfo_class_ORNG_XorShift128Plus_next64 arginfo_class_ORNG_XorShift128Plus_next
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_ORNG_XorShift128Plus_range, 0, 2, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO(0, min, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO(0, max, IS_LONG, 0)
@@ -26,6 +28,7 @@ ZEND_END_ARG_INFO()
 
 ZEND_METHOD(ORNG_XorShift128Plus, __construct);
 ZEND_METHOD(ORNG_XorShift128Plus, next);
+ZEND_METHOD(ORNG_XorShift128Plus, next64);
 ZEND_METHOD(ORNG_XorShift128Plus, range);
 ZEND_METHOD(ORNG_XorShift128Plus, shuffle);
 ZEND_METHOD(ORNG_XorShift128Plus, arrayRand);
