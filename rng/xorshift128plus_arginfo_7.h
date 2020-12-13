@@ -38,6 +38,7 @@ ZEND_METHOD(ORNG_XorShift128Plus, strShuffle);
 static const zend_function_entry class_ORNG_XorShift128Plus_methods[] = {
 	ZEND_ME(ORNG_XorShift128Plus, __construct, arginfo_class_ORNG_XorShift128Plus___construct, ZEND_ACC_PUBLIC)
 	ZEND_ME(ORNG_XorShift128Plus, next, arginfo_class_ORNG_XorShift128Plus_next, ZEND_ACC_PUBLIC)
+	ZEND_ME(ORNG_XorShift128Plus, next64, arginfo_class_ORNG_XorShift128Plus_next64, ZEND_ACC_PUBLIC)
 	ZEND_ME(ORNG_XorShift128Plus, range, arginfo_class_ORNG_XorShift128Plus_range, ZEND_ACC_PUBLIC)
 	ZEND_ME(ORNG_XorShift128Plus, shuffle, arginfo_class_ORNG_XorShift128Plus_shuffle, ZEND_ACC_PUBLIC)
 	ZEND_ME(ORNG_XorShift128Plus, arrayRand, arginfo_class_ORNG_XorShift128Plus_arrayRand, ZEND_ACC_PUBLIC)
