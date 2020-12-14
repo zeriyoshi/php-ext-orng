@@ -1,8 +1,8 @@
 --TEST--
-Check pollution another objects.
+Check next and next64.
 --SKIPIF--
 <?php
-if (!extension_loaded('orng')) {
+if (! extension_loaded('orng')) {
     echo 'skip';
 }
 ?>
@@ -22,7 +22,7 @@ foreach ($classes as $class) {
         $next = $origin->next();
         foreach ($children as $child) {
             if ($child->next() !== $next) {
-                die("NG, polltion detected in ${class} (count: ${i})");
+                die("NG, invalid result in ${class} (count: ${i})");
             }
         }
     }
@@ -30,12 +30,12 @@ foreach ($classes as $class) {
         $next64 = $origin->next64();
         foreach ($children as $child) {
             if ($child->next64() !== $next64) {
-                die("NG, polltion detected (64) in ${class} (count: ${i})");
+                die("NG, invalid result (64) in ${class} (count: ${i})");
             }
         }
     }
 }
-die('OK, pollution is NOT detected.');
+die('OK, all results corrected.');
 ?>
 --EXPECT--
-OK, pollution is NOT detected.
+OK, all results corrected.

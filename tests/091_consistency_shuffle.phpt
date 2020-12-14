@@ -2,7 +2,7 @@
 Check consistency for shuffle() in GLibCRand.
 --SKIPIF--
 <?php
-if (!extension_loaded('orng')) {
+if (! extension_loaded('orng')) {
     die('skip: extension not loaded.');
 }
 ?>

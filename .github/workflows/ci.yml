@@ -36,6 +36,10 @@ jobs:
           php --version
       - name: Clone
         uses: actions/checkout@master
+      - name: Regenerate XorShift128+ Data
+        run: |
+          gcc "./util/xorshift128plus/generator.c" -o "./util/xorshift128plus/generator"
+          ./util/xorshift128plus/generator > "./tests/data/tables/xorshift128plus.tsv"
       - name: Build and Test
         env:
           NO_INTERACTION: "1"
@@ -86,6 +90,10 @@ jobs:
       - name: Regenerate Data
         run: |
           ./util/data_gen_docker.sh
+      - name: Regenerate XorShift128+ Data
+        run: |
+          gcc "./util/xorshift128plus/generator.c" -o "./util/xorshift128plus/generator"
+          ./util/xorshift128plus/generator > "./tests/data/tables/xorshift128plus.tsv"
       - name: Build and Test
         env:
           NO_INTERACTION: "1"

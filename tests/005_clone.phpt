@@ -2,7 +2,7 @@
 Check clone object.
 --SKIPIF--
 <?php
-if (!extension_loaded('orng')) {
+if (! extension_loaded('orng')) {
     echo 'skip';
 }
 ?>

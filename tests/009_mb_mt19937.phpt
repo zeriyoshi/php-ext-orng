@@ -2,7 +2,7 @@
 Check MT19937 modulo bias on 64-bit machines.
 --SKIPIF--
 <?php
-if (!extension_loaded('orng')) {
+if (! extension_loaded('orng')) {
     echo 'skip';
 }
 ?>

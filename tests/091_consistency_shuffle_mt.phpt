@@ -2,7 +2,7 @@
 Check consistency for shuffle() in MT19937.
 --SKIPIF--
 <?php
-if (!extension_loaded('orng')) {
+if (! extension_loaded('orng')) {
     die('skip: extension not loaded.');
 }
 ?>

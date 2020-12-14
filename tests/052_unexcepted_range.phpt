@@ -2,7 +2,7 @@
 Check range method in unexcepted values. (PHP >= 8.0)
 --SKIPIF--
 <?php
-if (!extension_loaded('orng')) {
+if (! extension_loaded('orng')) {
     die('skip: extension not loaded.');
 }
 if (version_compare(PHP_VERSION, '8.0.0', '<')) {

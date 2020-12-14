@@ -2,7 +2,7 @@
 Check consistency for MT19937.
 --SKIPIF--
 <?php
-if (!extension_loaded('orng')) {
+if (! extension_loaded('orng')) {
     die('skip: extension not loaded.');
 }
 ?>
