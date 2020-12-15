@@ -4,7 +4,7 @@
 
 namespace ORNG;
 
-class GLibCRand implements RNGInterface
+class GLibCRand implements RNGInterface, \Serializable
 {
     public function __construct(int $seed) {}
     public function next(): int {}
@@ -13,4 +13,6 @@ class GLibCRand implements RNGInterface
     public function shuffle(array &$array): bool {}
     public function arrayRand(array $array, int $num = 1): int|string|array {}
     public function strShuffle(string $string): string {}
+    public function serialize(): string {}
+    public function unserialize(string $serialized): void {}
 }

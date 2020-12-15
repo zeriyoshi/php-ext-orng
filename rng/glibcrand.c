@@ -22,7 +22,12 @@
 #endif
 
 #include "php.h"
+#include "standard/php_var.h"
+
 #include "zend_bitset.h"
+#include "zend_interfaces.h"
+#include "zend_smart_str.h"
+#include "zend_exceptions.h"
 
 #include "../orng_compat.h"
 #include "../php_orng.h"
@@ -46,9 +51,9 @@ static uint32_t next32(orng_rng_common *c)
 
 	ORNG_GLibCRand_obj *obj = ((ORNG_GLibCRand_obj*)c->obj);
 
-	obj->r[obj->next % 344] = obj->r[(obj->next + 313) % 344] + obj->r[(obj->next + 341) % 344];
-	r = ((unsigned int) obj->r[obj->next % 344] >> 1);
-	obj->next = (obj->next + 1) % 344;
+	obj->r[obj->next % ORNG_GLIBCRAND_R] = obj->r[(obj->next + 313) % ORNG_GLIBCRAND_R] + obj->r[(obj->next + 341) % ORNG_GLIBCRAND_R];
+	r = ((unsigned int) obj->r[obj->next % ORNG_GLIBCRAND_R] >> 1);
+	obj->next = (obj->next + 1) % ORNG_GLIBCRAND_R;
 	return r;
 }
 
@@ -107,7 +112,7 @@ PHP_METHOD(ORNG_GLibCRand, __construct)
 
 	ORNG_GLibCRand_obj *obj = Z_ORNG_GLibCRand_P(getThis());
 
-	long useed = (unsigned int) seed;
+	unsigned int useed = (unsigned int) seed;
 
 	if (useed == 0) {
 		useed = 1;
@@ -120,10 +125,10 @@ PHP_METHOD(ORNG_GLibCRand, __construct)
 			obj->r[i] += 2147483647;
 		}
 	}
-	for (i = 31; i< 34; i++) {
+	for (i = 31; i < 34; i++) {
 		obj->r[i] = obj->r[i - 31];
 	}
-	for (i = 34; i < 344; i++) {
+	for (i = 34; i < ORNG_GLIBCRAND_R; i++) {
 		obj->r[i] = obj->r[i - 31] + obj->r[i - 3];
 	}
 	obj->next = 0;
@@ -268,12 +273,118 @@ PHP_METHOD(ORNG_GLibCRand, strShuffle)
 }
 /* }}} */
 
+/* {{{ \ORNG\GLibCRand::serialize(): string */
+PHP_METHOD(ORNG_GLibCRand, serialize)
+{
+	ORNG_GLibCRand_obj *intern;
+	php_serialize_data_t var_hash;
+	smart_str buf = {0};
+	int i;
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		ORNG_COMPAT_RETURN_ERROR_OR_NOTHING_SERIALIZE();
+	}
+
+	intern = Z_ORNG_GLibCRand_P(getThis());
+	
+	PHP_VAR_SERIALIZE_INIT(var_hash);
+
+	/* state */
+	zval r, next;
+	smart_str_appendl(&buf, "r:", 2);
+	ZVAL_LONG(&next, intern->next);
+	php_var_serialize(&buf, &next, &var_hash);
+	for (i = 0; i < ORNG_GLIBCRAND_R; i++) {
+		ZVAL_LONG(&r, intern->r[i]);
+		php_var_serialize(&buf, &r, &var_hash);
+	}
+
+	/* members */
+	zval members;
+	smart_str_appendl(&buf, "m:", 2);
+	ZVAL_ARR(&members, zend_array_dup(zend_std_get_properties(ORNG_COMPAT_ZVAL_GETTHIS())));
+	php_var_serialize(&buf, &members, &var_hash);
+	zval_ptr_dtor(&members);
+
+	PHP_VAR_SERIALIZE_DESTROY(var_hash);
+	
+	RETURN_NEW_STR(buf.s);
+}
+/* }}} */
+
+/* {{{ \ORNG\GLibCRand::unserialize(string $serialized): void */
+PHP_METHOD(ORNG_GLibCRand, unserialize)
+{
+	ORNG_GLibCRand_obj *intern;
+	char *buf;
+	size_t buf_len;
+	const unsigned char *p, *s;
+	php_unserialize_data_t var_hash;
+	zval *pcount, *pmembers;
+	zend_long count;
+	int i;
+
+	intern = Z_ORNG_GLibCRand_P(getThis());
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &buf, &buf_len) == FAILURE) {
+		ORNG_COMPAT_RETURN_ERROR_OR_NOTHING_SERIALIZE();
+	}
+
+	if (buf_len == 0) {
+		return;
+	}
+
+	/* state */
+	s = p = (const unsigned char*) buf;
+	PHP_VAR_UNSERIALIZE_INIT(var_hash);
+
+	if (*p!= 'r' || *++p != ':') {
+		goto outexcept;
+	}
+	p++;
+
+	pcount = var_tmp_var(&var_hash);
+	if (! php_var_unserialize(pcount, &p, s + buf_len, &var_hash) || Z_TYPE_P(pcount) != IS_LONG) {
+		goto outexcept;
+	}
+	intern->next = Z_LVAL_P(pcount);
+	for (i = 0; i < ORNG_GLIBCRAND_R; i++) {
+		if (! php_var_unserialize(pcount, &p, s + buf_len, &var_hash) || Z_TYPE_P(pcount) != IS_LONG) {
+			goto outexcept;
+		}
+		intern->r[i] = Z_LVAL_P(pcount);
+	}
+
+	/* members */
+	if (*p!= 'm' || *++p != ':') {
+		goto outexcept;
+	}
+	++p;
+
+	pmembers = var_tmp_var(&var_hash);
+	if (! php_var_unserialize(pmembers, &p, s + buf_len, &var_hash) || Z_TYPE_P(pmembers) != IS_ARRAY) {
+		goto outexcept;
+	}
+	object_properties_load(&intern->std, Z_ARRVAL_P(pmembers));
+
+	PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
+
+	return;
+
+outexcept:
+	PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
+	zend_throw_exception_ex(zend_ce_error_exception, 0, "Error at offset %zd of %zd bytes", ((char*)p - buf), buf_len);
+	return;
+}
+/* }}} */
+
 PHP_MINIT_FUNCTION(orng_rng_glibcrand)
 {
 	zend_class_entry ce;
 	INIT_CLASS_ENTRY(ce, ORNG_RNG_FQN(GLibCRand), class_ORNG_GLibCRand_methods);
 	ce_ORNG_GLibCRand = zend_register_internal_class(&ce);
 	zend_class_implements(ce_ORNG_GLibCRand, 1, orng_ce_ORNG_RNGInterface);
+	zend_class_implements(ce_ORNG_GLibCRand, 1, zend_ce_serializable);
 	ce_ORNG_GLibCRand->create_object = create_object;
 	memcpy(&oh_GLibCRand, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 	oh_GLibCRand.offset = XtOffsetOf(ORNG_GLibCRand_obj, std);

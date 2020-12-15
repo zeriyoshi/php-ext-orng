@@ -38,11 +38,13 @@ extern PHPAPI zend_class_entry *ce_ORNG_GLibCRand;
 #  define ORNG_GLIBCRAND_RAND_MAX RAND_MAX
 # endif
 
-#define ORNG_GLIBCRAND_RAND_RANGE(__n, __min, __max, __tmax) \
+# define ORNG_GLIBCRAND_RAND_RANGE(__n, __min, __max, __tmax) \
     (__n) = (__min) + (zend_long) ((double) ( (double) (__max) - (__min) + 1.0) * ((__n) / ((__tmax) + 1.0)))
 
+# define ORNG_GLIBCRAND_R 344
+
 typedef struct _ORNG_GLibCRand_obj {
-	int r[344];
+	int r[ORNG_GLIBCRAND_R];
 	int next;
   orng_rng_common *common;
 	zend_object std;

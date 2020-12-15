@@ -44,6 +44,8 @@
 #  define ORNG_COMPAT_RETURN_ERROR_OR_THROW_ARRAY_RAND_AVAIL() \
 	zend_argument_value_error(2, "must be between 1 and the number of elements in argument #1 ($array)"); \
 	RETURN_THROWS();
+#  define ORNG_COMPAT_RETURN_ERROR_OR_NOTHING_SERIALIZE() RETURN_THROWS();
+#  define ORNG_COMPAT_ZVAL_GETTHIS() Z_OBJ_P(getThis())
 # else
 #  define ORNG_COMPAT_RNG_CLONE_FUNCTION(__cn) \
 	static zend_object *orng_ORNG_clone_autodefined_##__cn(zval *__old)
@@ -57,6 +59,8 @@
 #  define ORNG_COMPAT_RETURN_ERROR_OR_THROW_ARRAY_RAND_AVAIL() \
 	php_error_docref(NULL, E_WARNING, "Second argument has to be between 1 and the number of elements in the array"); \
 	return;
+#  define ORNG_COMPAT_RETURN_ERROR_OR_NOTHING_SERIALIZE() return;
+#  define ORNG_COMPAT_ZVAL_GETTHIS() getThis()
 #  ifndef ZEND_ABSTRACT_ME_WITH_FLAGS
 #   define ZEND_ABSTRACT_ME_WITH_FLAGS(classname, name, arg_info, flags) ZEND_RAW_FENTRY(#name, NULL, arg_info, flags)
 #  endif
