@@ -1,5 +1,5 @@
 --TEST--
-Check arrayRand method in unexcepted over num. (PHP >= 8.0)
+Check arrayRand method in unexcepted over num. (PHP < 8.0)
 --SKIPIF--
 <?php
 if (! extension_loaded('orng')) {

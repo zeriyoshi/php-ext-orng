@@ -1,5 +1,5 @@
 --TEST--
-Check arrayRand method in unexcepted empty array. (PHP >= 8.0)
+Check arrayRand method in unexcepted empty array. (PHP < 8.0)
 --SKIPIF--
 <?php
 if (! extension_loaded('orng')) {
