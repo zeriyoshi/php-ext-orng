@@ -1,5 +1,5 @@
 --TEST--
-Check serialize() and uterialize().
+Check serialize() and unserialize().
 --SKIPIF--
 <?php
 if (! extension_loaded('orng')) {

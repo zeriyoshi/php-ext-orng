@@ -19,6 +19,7 @@ foreach (include('tests/data/classes.inc') as $class) {
     $t->foo = 'bar';
     $t->bar = 1234;
     $t->baz = [1, 2, 3, 4];
+    $t->next();
 
     if (! $t instanceof \Serializable) {
         continue;
