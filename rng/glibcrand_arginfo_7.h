@@ -25,6 +25,13 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_ORNG_GLibCRand_strShuffle,
 	ZEND_ARG_TYPE_INFO(0, string, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_ORNG_GLibCRand_serialize, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_ORNG_GLibCRand_unserialize, 0, 1, IS_VOID, 0)
+	ZEND_ARG_INFO(0, serialized)
+ZEND_END_ARG_INFO()
+
 
 ZEND_METHOD(ORNG_GLibCRand, __construct);
 ZEND_METHOD(ORNG_GLibCRand, next);
@@ -33,6 +40,8 @@ ZEND_METHOD(ORNG_GLibCRand, range);
 ZEND_METHOD(ORNG_GLibCRand, shuffle);
 ZEND_METHOD(ORNG_GLibCRand, arrayRand);
 ZEND_METHOD(ORNG_GLibCRand, strShuffle);
+ZEND_METHOD(ORNG_GLibCRand, serialize);
+ZEND_METHOD(ORNG_GLibCRand, unserialize);
 
 
 static const zend_function_entry class_ORNG_GLibCRand_methods[] = {
@@ -43,5 +52,7 @@ static const zend_function_entry class_ORNG_GLibCRand_methods[] = {
 	ZEND_ME(ORNG_GLibCRand, shuffle, arginfo_class_ORNG_GLibCRand_shuffle, ZEND_ACC_PUBLIC)
 	ZEND_ME(ORNG_GLibCRand, arrayRand, arginfo_class_ORNG_GLibCRand_arrayRand, ZEND_ACC_PUBLIC)
 	ZEND_ME(ORNG_GLibCRand, strShuffle, arginfo_class_ORNG_GLibCRand_strShuffle, ZEND_ACC_PUBLIC)
+	ZEND_ME(ORNG_GLibCRand, serialize, arginfo_class_ORNG_GLibCRand_serialize, ZEND_ACC_PUBLIC)
+	ZEND_ME(ORNG_GLibCRand, unserialize, arginfo_class_ORNG_GLibCRand_unserialize, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };

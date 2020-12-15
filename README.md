@@ -11,59 +11,22 @@ This is useful for reproducing situations such as poker games.
 
 ## Reference
 
-All classes implemented `\ORNG\RNGInterface`. it's so simple.
+All classes implemented [`\ORNG\RNGInterface`](rng/rnginterface.stub.php).
 
-```php
-<?php
+- `\ORNG\XorShift128Plus`: [stub](rng/xorshift128plus.stub.php)
+- `\ORNG\GLibCRand`: [stub](rng/glibcrand.stub.php)
+- `\ORNG\MT19937`: [stub](rng/mt19937.stub.php)
+- `\ORNG\MT19937PHP`: [stub](rng/mt19937php.stub.php)
+- `\ORNG\MT19937MB`: [stub](rng/mt19937mb.stub.php)
 
-interface \ORNG\RNGInterface
-{
-  /**
-   * Initialize RNG class with seed number.
-   */
-  public function __construct(int $seed);
++1, Some classes implemented `\Serializable`. they can serialize / unserialize RNG state.
 
-  /**
-   * Generate next random number.
-   */
-  public function next(): int;
-
-  /**
-   * Generate next random number (64bit range).
-   */
-  public function next64(): int;
-
-  /**
-   * Generate random number in range.
-   */
-  public function range(int $min, int $max): int;
-
-  /**
-   * Shuffle an array.
-   * 
-   * @see https://www.php.net/manual/en/function.shuffle.php
-   */
-  public function shuffle(array &$array): bool;
-
-  /**
-   * Pick one or more random keys out of an array.
-   * 
-   * @see https://www.php.net/manual/en/function.array-rand
-   */
-  public function arrayRand(array $array, int $num = 1): int|string|array;
-
-  /**
-   * Randomly shuffles a string.
-   * 
-   * @see https://www.php.net/manual/en/function.str-shuffle
-   */
-  public function strShuffle(string $string): string;
-}
-```
+- `\ORNG\XorShift128Plus`: [stub](rng/xorshift128plus.stub.php)
+- `\ORNG\GLibCRand`: [stub](rng/glibcrand.stub.php)
 
 ## Implemented RNG's
 
-- `\ORNG\XorShift128Plus`
+- `\ORNG\XorShift128Plus`: Fast and smart PRNG.
 - `\ORNG\GLibCRand`: Compatible for GNU libc based PHP 7.0 and earlier `srand()` and `rand()` functions.
 - `\ORNG\MT19937`: Genuine implementation of Mersenne Twister from php-src.
 - `\ORNG\MT19937PHP`: PHP specific incorrect Mersenne Twister implementation from php-src.

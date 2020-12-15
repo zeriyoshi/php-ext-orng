@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 88c3c540ccca1b2f6fb0251f05c6f6ad01809940 */
+ * Stub hash: f59b876c9518ef50fe4fa78e5cecf863c7a792be */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_ORNG_XorShift128Plus___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, seed, IS_LONG, 0)
@@ -28,6 +28,13 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_ORNG_XorShift128Plus_strSh
 	ZEND_ARG_TYPE_INFO(0, string, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_ORNG_XorShift128Plus_serialize, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_ORNG_XorShift128Plus_unserialize, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, serialized, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
 
 ZEND_METHOD(ORNG_XorShift128Plus, __construct);
 ZEND_METHOD(ORNG_XorShift128Plus, next);
@@ -36,6 +43,8 @@ ZEND_METHOD(ORNG_XorShift128Plus, range);
 ZEND_METHOD(ORNG_XorShift128Plus, shuffle);
 ZEND_METHOD(ORNG_XorShift128Plus, arrayRand);
 ZEND_METHOD(ORNG_XorShift128Plus, strShuffle);
+ZEND_METHOD(ORNG_XorShift128Plus, serialize);
+ZEND_METHOD(ORNG_XorShift128Plus, unserialize);
 
 
 static const zend_function_entry class_ORNG_XorShift128Plus_methods[] = {
@@ -46,5 +55,7 @@ static const zend_function_entry class_ORNG_XorShift128Plus_methods[] = {
 	ZEND_ME(ORNG_XorShift128Plus, shuffle, arginfo_class_ORNG_XorShift128Plus_shuffle, ZEND_ACC_PUBLIC)
 	ZEND_ME(ORNG_XorShift128Plus, arrayRand, arginfo_class_ORNG_XorShift128Plus_arrayRand, ZEND_ACC_PUBLIC)
 	ZEND_ME(ORNG_XorShift128Plus, strShuffle, arginfo_class_ORNG_XorShift128Plus_strShuffle, ZEND_ACC_PUBLIC)
+	ZEND_ME(ORNG_XorShift128Plus, serialize, arginfo_class_ORNG_XorShift128Plus_serialize, ZEND_ACC_PUBLIC)
+	ZEND_ME(ORNG_XorShift128Plus, unserialize, arginfo_class_ORNG_XorShift128Plus_unserialize, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
