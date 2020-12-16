@@ -3,7 +3,6 @@
   | ORNG - PHP Objective RNG                                             |
   +----------------------------------------------------------------------+
   | Copyright (c) The PHP Group                                          |
-  | Copyright (c) Go Kudo                                                |
   +----------------------------------------------------------------------+
   | This source file is subject to version 3.01 of the PHP license,      |
   | that is bundled with this package in the file LICENSE, and is        |
