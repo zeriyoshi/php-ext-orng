@@ -29,7 +29,6 @@ extern zend_module_entry orng_module_entry;
 PHP_MINIT_FUNCTION(orng);
 PHP_MSHUTDOWN_FUNCTION(orng);
 PHP_RINIT_FUNCTION(orng);
-PHP_RSHUTDOWN_FUNCTION(orng);
 PHP_MINFO_FUNCTION(orng);
 
 # if defined(ZTS) && defined(COMPILE_DL_ORNG)

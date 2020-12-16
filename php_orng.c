@@ -43,13 +43,6 @@ PHP_RINIT_FUNCTION(orng)
 }
 /* }}} */
 
-/* {{{ PHP_RSHUTDOWN_FUNCTION */
-PHP_RSHUTDOWN_FUNCTION(orng)
-{
-	return SUCCESS;
-}
-/* }}} */
-
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(orng)
 {
@@ -86,7 +79,7 @@ zend_module_entry orng_module_entry = {
 	PHP_MINIT(orng),
 	PHP_MSHUTDOWN(orng),
 	PHP_RINIT(orng),
-	PHP_RSHUTDOWN(orng),
+	NULL,
 	PHP_MINFO(orng),
 	PHP_ORNG_VERSION,
 	STANDARD_MODULE_PROPERTIES
