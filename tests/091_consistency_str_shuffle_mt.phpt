@@ -5,6 +5,9 @@ Check consistency for strShuffle() in MT19937.
 if (! extension_loaded('orng')) {
     die('skip: extension not loaded.');
 }
+if (! file_exists('data/tables/str_shuffle_mt.inc')) {
+    die('skip: result table not found.');
+}
 ?>
 --FILE--
 <?php

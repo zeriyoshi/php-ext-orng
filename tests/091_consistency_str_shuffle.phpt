@@ -5,6 +5,9 @@ Check consistency for strShuffle() in GLibCRand.
 if (! extension_loaded('orng')) {
     die('skip: extension not loaded.');
 }
+if (! file_exists('data/tables/str_shuffle_rand.inc')) {
+    die('skip: result table not found.');
+}
 ?>
 --FILE--
 <?php
