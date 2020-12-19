@@ -1,11 +1,5 @@
-<?xml version="1.0"?>
-<package version="2.0" xmlns="http://pear.php.net/dtd/package-2.0"
-    xmlns:tasks="http://pear.php.net/dtd/tasks-1.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
-http://pear.php.net/dtd/tasks-1.0.xsd
-http://pear.php.net/dtd/package-2.0
-http://pear.php.net/dtd/package-2.0.xsd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<package packagerversion="1.10.12" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
  <name>orng</name>
  <channel>pecl.php.net</channel>
  <summary>orng - Object scoped PRNG Extension</summary>
@@ -17,6 +11,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <active>yes</active>
  </lead>
  <date>2020-12-19</date>
+ <time>05:41:30</time>
  <version>
   <release>0.0.1</release>
   <api>0.0.1</api>
@@ -31,80 +26,73 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </notes>
  <contents>
   <dir name="/">
-   <dir name="tests">
-    <dir name="data">
-     <dir name="tables">
-      <file name="array_rand_mt_mb.inc" role="test" />
-      <file name="array_rand_mt.inc" role="test" />
-      <file name="array_rand_rand.inc" role="test" />
-      <file name="mt_mb.inc" role="test" />
-      <file name="mt_php.inc" role="test" />
-      <file name="rand.inc" role="test" />
-      <file name="shuffle_mt_mb.inc" role="test" />
-      <file name="shuffle_mt.inc" role="test" />
-      <file name="shuffle_rand.inc" role="test" />
-      <file name="str_shuffle_mt.inc" role="test" />
-      <file name="str_shuffle_rand.inc" role="test" />
-      <file name="xorshift128plus.tsv" role="test" />
-     </dir>
-     <file name="classes.inc" role="test">
-    </dir>
-    <file name="001_extension.phpt" role="test" />
-    <file name="002_inheritance.phpt" role="test" />
-    <file name="003_next_xorshift128plus.phpt" role="test" />
-    <file name="003_next.phpt" role="test" />
-    <file name="004_range.phpt" role="test" />
-    <file name="005_clone.phpt" role="test" />
-    <file name="006_shuffle.phpt" role="test" />
-    <file name="007_array_rand.phpt" role="test" />
-    <file name="008_str_shuffle.phpt" role="test" />
-    <file name="009_mb_mt19937.phpt" role="test" />
-    <file name="010_serialize.phpt" role="test" />
-    <file name="050_unexcepted_array_rand_empty_7.phpt" role="test" />
-    <file name="050_unexcepted_array_rand_empty.phpt" role="test" />
-    <file name="051_unexcepted_array_rand_over_7.phpt" role="test" />
-    <file name="051_unexcepted_array_rand_over.phpt" role="test" />
-    <file name="052_unexcepted_range_7.phpt" role="test" />
-    <file name="052_unexcepted_range.phpt" role="test" />
-    <file name="053_unexcepted_serialize.phpt" role="test" />
-    <file name="090_consistency_mt_mb.phpt" role="test" />
-    <file name="090_consistency_mt_php.phpt" role="test" />
-    <file name="090_consistency_mt.phpt" role="test" />
-    <file name="090_consistency_rand.phpt" role="test" />
-    <file name="091_consistency_array_rand_mt_mb.phpt" role="test" />
-    <file name="091_consistency_array_rand_mt.phpt" role="test" />
-    <file name="091_consistency_array_rand.phpt" role="test" />
-    <file name="091_consistency_shuffle_mt_mb.phpt" role="test" />
-    <file name="091_consistency_shuffle_mt.phpt" role="test" />
-    <file name="091_consistency_shuffle.phpt" role="test" />
-    <file name="091_consistency_str_shuffle_mt.phpt" role="test" />
-    <file name="091_consistency_str_shuffle.phpt" role="test" />
-   </dir>
-   <dir name="rng">
-    <file name="glibcrand_arginfo_7.h" role="src" />
-    <file name="glibcrand_arginfo.h" role="src" />
-    <file name="glibcrand.c" role="src" />
-    <file name="glibcrand.h" role="src" />
-    <file name="mt19937_arginfo_7.h" role="src" />
-    <file name="mt19937_arginfo.h" role="src" />
-    <file name="mt19937.c" role="src" />
-    <file name="mt19937.h" role="src" />
-    <file name="rnginterface_arginfo_7.h" role="src" />
-    <file name="rnginterface_arginfo.h" role="src" />
-    <file name="rnginterface.c" role="src" />
-    <file name="rnginterface.h" role="src" />
-    <file name="xorshift128plus_arginfo_7.h" role="src" />
-    <file name="xorshift128plus_arginfo.h" role="src" />
-    <file name="xorshift128plus.c" role="src" />
-    <file name="xorshift128plus.h" role="src" />
-   </dir>
-   <file name="config.m4" role="src" />
-   <file name="config.w32" role="src" />
-   <file name="orng_compat.h" role="src" />
-   <file name="orng_util.h" role="src" />
-   <file name="php_orng.c" role="src" />
-   <file name="php_orng.h" role="src" />
-   <file name="README.md" role="doc" />
+   <file md5sum="85089c83346bb03f7814ac6318dd7778" name="tests/data/tables/array_rand_mt_mb.inc" role="test" />
+   <file md5sum="225cc16e5c4049c8315089cb0ec6bbca" name="tests/data/tables/array_rand_mt.inc" role="test" />
+   <file md5sum="84a4cde1a828d8ad74045caabd2243c0" name="tests/data/tables/array_rand_rand.inc" role="test" />
+   <file md5sum="1865c3efd7504c95146996a258e7db3c" name="tests/data/tables/mt_mb.inc" role="test" />
+   <file md5sum="4698cbcfd220777cade4200e52386d96" name="tests/data/tables/mt_php.inc" role="test" />
+   <file md5sum="7ae62a0338bd9c8cb257e48bb713ba26" name="tests/data/tables/mt.inc" role="test" />
+   <file md5sum="816f76287818dde171a0b12fbb928553" name="tests/data/tables/rand.inc" role="test" />
+   <file md5sum="fa7bbd46d61c5707464ba1f906369586" name="tests/data/tables/shuffle_mt_mb.inc" role="test" />
+   <file md5sum="5261f22c2249ad29026d4cb8a8df6e74" name="tests/data/tables/shuffle_mt.inc" role="test" />
+   <file md5sum="b0a832a99b11ebe8434880351418f5cf" name="tests/data/tables/shuffle_rand.inc" role="test" />
+   <file md5sum="5b69d4dcc1f880b495346c5f37198b07" name="tests/data/tables/str_shuffle_mt.inc" role="test" />
+   <file md5sum="88d1a04459aef0d137572cda8ef90e36" name="tests/data/tables/str_shuffle_rand.inc" role="test" />
+   <file md5sum="e8b2bfe775ed215901ffadcf6bbe330d" name="tests/data/tables/xorshift128plus.tsv" role="test" />
+   <file md5sum="a97d9e320f6c7f9ad48818ff0ac39c28" name="tests/data/classes.inc" role="test" />
+   <file md5sum="9a42db7191371cbde1c6888bf32fad00" name="tests/001_extension.phpt" role="test" />
+   <file md5sum="fcc2d544c1997a9bfd817b030b35cd96" name="tests/002_inheritance.phpt" role="test" />
+   <file md5sum="0606d976e34681833180bff1fdd2e2bd" name="tests/003_next_xorshift128plus.phpt" role="test" />
+   <file md5sum="20635df10e52e711df3b7670a734e08a" name="tests/003_next.phpt" role="test" />
+   <file md5sum="51e26d28f48a58fbd157fc0ad77fdaa1" name="tests/004_range.phpt" role="test" />
+   <file md5sum="ef34b7192d7f58dfe43bdb695087e994" name="tests/005_clone.phpt" role="test" />
+   <file md5sum="d6021ad4d7242981fe513dc9bcb662ae" name="tests/006_shuffle.phpt" role="test" />
+   <file md5sum="a261ef6ad9aaf062bf83b4703f5d7b26" name="tests/007_array_rand.phpt" role="test" />
+   <file md5sum="91d4fbf99bb3193c37f656962215e080" name="tests/008_str_shuffle.phpt" role="test" />
+   <file md5sum="92c9cfdd4580f66759c1d7763eedca97" name="tests/009_mb_mt19937.phpt" role="test" />
+   <file md5sum="b729b7d4b393315efb8cc7064815896c" name="tests/010_serialize.phpt" role="test" />
+   <file md5sum="d6cd1c4dc134b3e7bbedf8257e80277a" name="tests/050_unexcepted_array_rand_empty_7.phpt" role="test" />
+   <file md5sum="d7951754e06d07fd57c05da42538c148" name="tests/050_unexcepted_array_rand_empty.phpt" role="test" />
+   <file md5sum="53936d362cd9f26ca703a0d6bf5424c7" name="tests/051_unexcepted_array_rand_over_7.phpt" role="test" />
+   <file md5sum="e1ba8ea3bfdf0a7502e1a56a7b36ed78" name="tests/051_unexcepted_array_rand_over.phpt" role="test" />
+   <file md5sum="d4882a7a16f9320663c6f3bafc56ef03" name="tests/052_unexcepted_range_7.phpt" role="test" />
+   <file md5sum="c522c811959c600a4a9b2704a661fbc1" name="tests/052_unexcepted_range.phpt" role="test" />
+   <file md5sum="a81875b7dfdc53028bcdb79344242140" name="tests/053_unexcepted_serialize.phpt" role="test" />
+   <file md5sum="0c72c528a3df7de82d4f3d3104881b6f" name="tests/090_consistency_mt_mb.phpt" role="test" />
+   <file md5sum="5776e497422b20dc86d95052d48056b4" name="tests/090_consistency_mt_php.phpt" role="test" />
+   <file md5sum="9702081c71f81d1d31b1454486003f42" name="tests/090_consistency_mt.phpt" role="test" />
+   <file md5sum="626ff6d93fc5f30784793ae3d94e5c8f" name="tests/090_consistency_rand.phpt" role="test" />
+   <file md5sum="5f58066f5f55bf6ffa0add276428749a" name="tests/091_consistency_array_rand_mt_mb.phpt" role="test" />
+   <file md5sum="e08070c6c986e6e89671f597d7e91e8c" name="tests/091_consistency_array_rand_mt.phpt" role="test" />
+   <file md5sum="c023d2db20bddad3f370132f59db093d" name="tests/091_consistency_array_rand.phpt" role="test" />
+   <file md5sum="407ea1bafe65359a45ddf25523f786f7" name="tests/091_consistency_shuffle_mt_mb.phpt" role="test" />
+   <file md5sum="11c2b51bdedf751f537e78c1e9866467" name="tests/091_consistency_shuffle_mt.phpt" role="test" />
+   <file md5sum="0daa2e8fad5f05cb668e7ca5d72c11da" name="tests/091_consistency_shuffle.phpt" role="test" />
+   <file md5sum="2f9dbaf0d33c8e384a7120ebfac41dc6" name="tests/091_consistency_str_shuffle_mt.phpt" role="test" />
+   <file md5sum="1d4e1e4eb81bd8cd48e402cc6005404c" name="tests/091_consistency_str_shuffle.phpt" role="test" />
+   <file md5sum="f29eb0b8b1efb3e1e9ca8179b149c7b5" name="rng/glibcrand_arginfo_7.h" role="src" />
+   <file md5sum="50751acebe7a2d21d5658a51aa375f86" name="rng/glibcrand_arginfo.h" role="src" />
+   <file md5sum="da30eafd48b1dc5a22334294fefb36fe" name="rng/glibcrand.c" role="src" />
+   <file md5sum="714a47651948116fb05ae8822363d6c7" name="rng/glibcrand.h" role="src" />
+   <file md5sum="19e552b66584b5a806919887448bb628" name="rng/mt19937_arginfo_7.h" role="src" />
+   <file md5sum="3770086c3706348c0002f062830bf9fd" name="rng/mt19937_arginfo.h" role="src" />
+   <file md5sum="6269c74ff9212f740685e6548ddf9c35" name="rng/mt19937.c" role="src" />
+   <file md5sum="2e1bad5230f8e2535d452a07197a2c50" name="rng/mt19937.h" role="src" />
+   <file md5sum="68d4360162d84816d494191b72063413" name="rng/rnginterface_arginfo_7.h" role="src" />
+   <file md5sum="5bc21ced77632a8420f425e472b36053" name="rng/rnginterface_arginfo.h" role="src" />
+   <file md5sum="7957773e06c2cc180f7380e847a14d26" name="rng/rnginterface.c" role="src" />
+   <file md5sum="fbe2a21d65c71f7678fcb4c5f1edefa7" name="rng/rnginterface.h" role="src" />
+   <file md5sum="d5892eeff20115cbfa0862a72a2a4b08" name="rng/xorshift128plus_arginfo_7.h" role="src" />
+   <file md5sum="ada906c34dbf1a51d31b2c90e132986b" name="rng/xorshift128plus_arginfo.h" role="src" />
+   <file md5sum="918c49fe51d6a5f174e22deeac84b49d" name="rng/xorshift128plus.c" role="src" />
+   <file md5sum="3cf7a1d882508d3dd97a0fcdf8fb727c" name="rng/xorshift128plus.h" role="src" />
+   <file md5sum="0ccc3efce718e62b36e5dd38177ba2bf" name="config.m4" role="src" />
+   <file md5sum="5b22dee245b22f68bc2fba6c53e7ca22" name="config.w32" role="src" />
+   <file md5sum="89452bd1cf0f8a28ab2dfe61e98d7cca" name="orng_compat.h" role="src" />
+   <file md5sum="260cf2bb329aeeefef4d94a4e6899f1b" name="orng_util.h" role="src" />
+   <file md5sum="428da9922225431cc88c07b32b1911e9" name="php_orng.c" role="src" />
+   <file md5sum="6e0c17bf66afacb45398b10a88223b6a" name="php_orng.h" role="src" />
+   <file md5sum="3fab58fd3a8aff30a644ba2cc432f7df" name="README.md" role="doc" />
   </dir>
  </contents>
  <dependencies>
@@ -118,6 +106,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
   </required>
  </dependencies>
  <providesextension>orng</providesextension>
+ <extsrcrelease />
  <changelog>
   <release>
    <date>2020-12-19</date>
