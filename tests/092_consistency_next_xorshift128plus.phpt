@@ -5,14 +5,14 @@ Check next and next64. (XorShift128Plus)
 if (! extension_loaded('orng')) {
     echo 'skip';
 }
-if (! file_exists('data/tables/xorshift128plus.tsv')) {
+if (! file_exists(__DIR__ . '/data/tables/xorshift128plus.tsv')) {
     die('skip: result table not found.');
 }
 ?>
 --FILE--
 <?php
 
-$f = fopen('data/tables/xorshift128plus.tsv', 'r');
+$f = fopen(__DIR__ . '/data/tables/xorshift128plus.tsv', 'r');
 
 $method = 'next';
 while (($buf = fgets($f)) !== false) {

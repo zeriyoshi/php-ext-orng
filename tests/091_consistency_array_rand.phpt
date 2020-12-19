@@ -5,7 +5,7 @@ Check consistency for arrayRand() in GLibCRand.
 if (! extension_loaded('orng')) {
     die('skip: extension not loaded.');
 }
-if (! file_exists('data/tables/array_rand_rand.inc')) {
+if (! file_exists(__DIR__ . '/data/tables/array_rand_rand.inc')) {
     die('skip: result table not found.');
 }
 ?>

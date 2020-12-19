@@ -5,7 +5,7 @@ Check consistency for arrayRand() in MT19937.
 if (! extension_loaded('orng')) {
     die('skip: extension not loaded.');
 }
-if (! file_exists('data/tables/array_rand_mt.inc')) {
+if (! file_exists(__DIR__ . '/data/tables/array_rand_mt.inc')) {
     die('skip: result table not found.');
 }
 ?>

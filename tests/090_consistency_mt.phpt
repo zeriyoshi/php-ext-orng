@@ -5,7 +5,7 @@ Check consistency for MT19937.
 if (! extension_loaded('orng')) {
     die('skip: extension not loaded.');
 }
-if (! file_exists('data/tables/mt.inc')) {
+if (! file_exists(__DIR__ . '/data/tables/mt.inc')) {
     die('skip: result table not found.');
 }
 ?>
