@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<package version="2.0" xmlns="http://pear.php.net/dtd/package-2.0"
+    xmlns:tasks="http://pear.php.net/dtd/tasks-1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+http://pear.php.net/dtd/tasks-1.0.xsd
+http://pear.php.net/dtd/package-2.0
+http://pear.php.net/dtd/package-2.0.xsd">
+ <name>orng</name>
+ <channel>pecl.php.net</channel>
+ <summary>orng - Object scoped PRNG Extension</summary>
+ <description>Provides a past PHP compatible PRNG implementation of object scope.</description>
+ <lead>
+  <name>Go Kudo</name>
+  <user>zeriyoshi</user>
+  <email>zeriyoshi@gmail.com</email>
+  <active>yes</active>
+ </lead>
+ <date>2020-12-19</date>
+ <version>
+  <release>0.0.1</release>
+  <api>0.0.1</api>
+ </version>
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ <license uri="http://www.php.net/license">PHP License</license>
+ <notes>
+- Initial Release.
+ </notes>
+ <contents>
+  <dir name="/">
+   <dir name="tests">
+    <dir name="data">
+     <dir name="tables">
+      <file name="array_rand_mt_mb.inc" role="test" />
+      <file name="array_rand_mt.inc" role="test" />
+      <file name="array_rand_rand.inc" role="test" />
+      <file name="mt_mb.inc" role="test" />
+      <file name="mt_php.inc" role="test" />
+      <file name="rand.inc" role="test" />
+      <file name="shuffle_mt_mb.inc" role="test" />
+      <file name="shuffle_mt.inc" role="test" />
+      <file name="shuffle_rand.inc" role="test" />
+      <file name="str_shuffle_mt.inc" role="test" />
+      <file name="str_shuffle_rand.inc" role="test" />
+      <file name="xorshift128plus.tsv" role="test" />
+     </dir>
+     <file name="classes.inc" role="test">
+    </dir>
+    <file name="001_extension.phpt" role="test" />
+    <file name="002_inheritance.phpt" role="test" />
+    <file name="003_next_xorshift128plus.phpt" role="test" />
+    <file name="003_next.phpt" role="test" />
+    <file name="004_range.phpt" role="test" />
+    <file name="005_clone.phpt" role="test" />
+    <file name="006_shuffle.phpt" role="test" />
+    <file name="007_array_rand.phpt" role="test" />
+    <file name="008_str_shuffle.phpt" role="test" />
+    <file name="009_mb_mt19937.phpt" role="test" />
+    <file name="010_serialize.phpt" role="test" />
+    <file name="050_unexcepted_array_rand_empty_7.phpt" role="test" />
+    <file name="050_unexcepted_array_rand_empty.phpt" role="test" />
+    <file name="051_unexcepted_array_rand_over_7.phpt" role="test" />
+    <file name="051_unexcepted_array_rand_over.phpt" role="test" />
+    <file name="052_unexcepted_range_7.phpt" role="test" />
+    <file name="052_unexcepted_range.phpt" role="test" />
+    <file name="053_unexcepted_serialize.phpt" role="test" />
+    <file name="090_consistency_mt_mb.phpt" role="test" />
+    <file name="090_consistency_mt_php.phpt" role="test" />
+    <file name="090_consistency_mt.phpt" role="test" />
+    <file name="090_consistency_rand.phpt" role="test" />
+    <file name="091_consistency_array_rand_mt_mb.phpt" role="test" />
+    <file name="091_consistency_array_rand_mt.phpt" role="test" />
+    <file name="091_consistency_array_rand.phpt" role="test" />
+    <file name="091_consistency_shuffle_mt_mb.phpt" role="test" />
+    <file name="091_consistency_shuffle_mt.phpt" role="test" />
+    <file name="091_consistency_shuffle.phpt" role="test" />
+    <file name="091_consistency_str_shuffle_mt.phpt" role="test" />
+    <file name="091_consistency_str_shuffle.phpt" role="test" />
+   </dir>
+   <dir name="rng">
+    <file name="glibcrand_arginfo_7.h" role="src" />
+    <file name="glibcrand_arginfo.h" role="src" />
+    <file name="glibcrand.c" role="src" />
+    <file name="glibcrand.h" role="src" />
+    <file name="mt19937_arginfo_7.h" role="src" />
+    <file name="mt19937_arginfo.h" role="src" />
+    <file name="mt19937.c" role="src" />
+    <file name="mt19937.h" role="src" />
+    <file name="rnginterface_arginfo_7.h" role="src" />
+    <file name="rnginterface_arginfo.h" role="src" />
+    <file name="rnginterface.c" role="src" />
+    <file name="rnginterface.h" role="src" />
+    <file name="xorshift128plus_arginfo_7.h" role="src" />
+    <file name="xorshift128plus_arginfo.h" role="src" />
+    <file name="xorshift128plus.c" role="src" />
+    <file name="xorshift128plus.h" role="src" />
+   </dir>
+   <file name="config.m4" role="src" />
+   <file name="config.w32" role="src" />
+   <file name="orng_compat.h" role="src" />
+   <file name="orng_util.h" role="src" />
+   <file name="php_orng.c" role="src" />
+   <file name="php_orng.h" role="src" />
+   <file name="README.md" role="doc" />
+  </dir>
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>7.3.0</min>
+   </php>
+   <pearinstaller>
+    <min>1.10</min>
+   </pearinstaller>
+  </required>
+ </dependencies>
+ <providesextension>orng</providesextension>
+ <changelog>
+  <release>
+   <date>2020-12-19</date>
+   <version>
+    <release>0.0.1</release>
+    <api>0.0.1</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+- Initial Release.
+   </notes>
+  </release>
+ </changelog>
+</package>
