@@ -13,7 +13,7 @@
  <date>2020-12-19</date>
  <time>05:52:42</time>
  <version>
-  <release>0.0.1</release>
+  <release>0.0.2</release>
   <api>0.0.1</api>
  </version>
  <stability>
@@ -22,7 +22,7 @@
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
-- Initial Release.
+- Fix missing LICENSE in package.xml for Windows DLL build.
  </notes>
  <contents>
   <dir name="/">
@@ -75,6 +75,7 @@
    <file md5sum="3cf7a1d882508d3dd97a0fcdf8fb727c" name="rng/xorshift128plus.h" role="src" />
    <file md5sum="0ccc3efce718e62b36e5dd38177ba2bf" name="config.m4" role="src" />
    <file md5sum="5b22dee245b22f68bc2fba6c53e7ca22" name="config.w32" role="src" />
+   <file name="LICENSE" role="doc" />
    <file md5sum="89452bd1cf0f8a28ab2dfe61e98d7cca" name="orng_compat.h" role="src" />
    <file md5sum="260cf2bb329aeeefef4d94a4e6899f1b" name="orng_util.h" role="src" />
    <file md5sum="428da9922225431cc88c07b32b1911e9" name="php_orng.c" role="src" />
@@ -95,6 +96,21 @@
  <providesextension>orng</providesextension>
  <extsrcrelease />
  <changelog>
+   <release>
+   <date>2020-12-19</date>
+   <version>
+    <release>0.0.2</release>
+    <api>0.0.1</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+- Fix missing LICENSE in package.xml for Windows DLL build.
+   </notes>
+  </release>
   <release>
    <date>2020-12-19</date>
    <version>
