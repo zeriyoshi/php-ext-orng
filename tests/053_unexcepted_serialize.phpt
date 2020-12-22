@@ -11,7 +11,7 @@ if (! extension_loaded('orng')) {
 
 const SEED = 1234;
 
-foreach (include('tests/data/classes.inc') as $class) {
+foreach (include(__DIR__ . '/data/classes.inc') as $class) {
     $t = new $class(SEED);
 
     if (! $t instanceof \Serializable) {

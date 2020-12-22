@@ -11,7 +11,7 @@ if (! extension_loaded('orng')) {
 
 const SEED = 1234;
 
-foreach (include('tests/data/classes.inc') as $class) {
+foreach (include(__DIR__ . '/data/classes.inc') as $class) {
     $e = explode('\\', $class);
     $define_class = 'X' . end($e);
     eval("class ${define_class} extends ${class} { public \$foo; public \$bar; public \$baz; }");
