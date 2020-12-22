@@ -23,7 +23,7 @@
 #  ifdef PHP_ORNG_EXPORTS
 #   define PHP_ORNG_API __declspec(dllexport)
 #  else
-#   define PHP_ORNG_API
+#   define PHP_ORNG_API __declspec(dllimport)
 #  endif
 # elif defined(__GNUC__) && __GNUC__ >= 4
 #  define PHP_ORNG_API __attribute__ ((visibility("default")))
