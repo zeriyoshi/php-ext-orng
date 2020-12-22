@@ -38,9 +38,9 @@
 // Note: "mt19937php_arghinfo.h" is not required.
 // Note: "mt19937mb_arginfo.h" is not required.
 
-PHPAPI zend_class_entry *ce_ORNG_MT19937;
-PHPAPI zend_class_entry *ce_ORNG_MT19937PHP;
-PHPAPI zend_class_entry *ce_ORNG_MT19937MB;
+PHP_ORNG_API zend_class_entry *ce_ORNG_MT19937;
+PHP_ORNG_API zend_class_entry *ce_ORNG_MT19937PHP;
+PHP_ORNG_API zend_class_entry *ce_ORNG_MT19937MB;
 
 static zend_object_handlers oh_MT19937;
 

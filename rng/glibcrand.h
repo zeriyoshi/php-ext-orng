@@ -23,7 +23,7 @@
 
 # include "../orng_util.h"
 
-extern PHPAPI zend_class_entry *ce_ORNG_GLibCRand;
+extern PHP_ORNG_API zend_class_entry *ce_ORNG_GLibCRand;
 
 /* System Rand functions */
 # ifndef ORNG_GLIBCRAND_MAX

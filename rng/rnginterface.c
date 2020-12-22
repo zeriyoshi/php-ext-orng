@@ -32,7 +32,7 @@
 # include "rnginterface_arginfo_7.h"
 #endif
 
-PHPAPI zend_class_entry *orng_ce_ORNG_RNGInterface;
+PHP_ORNG_API zend_class_entry *orng_ce_ORNG_RNGInterface;
 
 PHP_MINIT_FUNCTION(orng_rng_rnginterface)
 {

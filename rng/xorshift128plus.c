@@ -41,7 +41,7 @@
 # include "xorshift128plus_arginfo_7.h"
 #endif
 
-PHPAPI zend_class_entry *ce_ORNG_XorShift128Plus;
+PHP_ORNG_API zend_class_entry *ce_ORNG_XorShift128Plus;
 
 static zend_object_handlers oh_XorShift128Plus;
 

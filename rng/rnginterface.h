@@ -21,7 +21,7 @@
 
 # include "php.h"
 
-extern PHPAPI zend_class_entry *orng_ce_ORNG_RNGInterface;
+extern PHP_ORNG_API zend_class_entry *orng_ce_ORNG_RNGInterface;
 
 PHP_MINIT_FUNCTION(orng_rng_rnginterface);
 

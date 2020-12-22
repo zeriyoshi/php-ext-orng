@@ -19,6 +19,18 @@
 #ifndef PHP_ORNG_H
 # define PHP_ORNG_H
 
+# ifdef PHP_WIN32
+#  ifdef PHP_ORNG_EXPORTS
+#   define PHP_ORNG_API __declspec(dllexport)
+#  else
+#   define PHP_ORNG_API
+#  endif
+# elif defined(__GNUC__) && __GNUC__ >= 4
+#  define PHP_ORNG_API __attribute__ ((visibility("default")))
+# else
+#  define PHP_ORNG_API
+# endif
+
 # define ORNG_RNG_FQN(__cn) "ORNG\\"#__cn
 
 extern zend_module_entry orng_module_entry;
