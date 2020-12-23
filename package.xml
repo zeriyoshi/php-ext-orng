@@ -22,7 +22,8 @@
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
-- Fix missing LICENSE in package.xml for Windows DLL build.
+- Support Windows (Thanks cmb)
+- Fix stabilities, currently NOT stable.
  </notes>
  <contents>
   <dir name="/">
