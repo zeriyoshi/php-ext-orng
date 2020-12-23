@@ -36,7 +36,7 @@
 extern zend_module_entry orng_module_entry;
 # define phpext_orng_ptr &orng_module_entry
 
-# define PHP_ORNG_VERSION "0.0.3-dev"
+# define PHP_ORNG_VERSION "0.0.3"
 
 PHP_MINIT_FUNCTION(orng);
 PHP_MSHUTDOWN_FUNCTION(orng);
