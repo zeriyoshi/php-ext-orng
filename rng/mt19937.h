@@ -23,9 +23,9 @@
 
 # include "../orng_util.h"
 
-extern PHPAPI zend_class_entry *ce_ORNG_MT19937;
-extern PHPAPI zend_class_entry *ce_ORNG_MT19937PHP;
-extern PHPAPI zend_class_entry *ce_ORNG_MT19937MB;
+extern PHP_ORNG_API zend_class_entry *ce_ORNG_MT19937;
+extern PHP_ORNG_API zend_class_entry *ce_ORNG_MT19937PHP;
+extern PHP_ORNG_API zend_class_entry *ce_ORNG_MT19937MB;
 
 # define ORNG_MT19937_MT_RAND_MAX ((zend_long) (0x7FFFFFFF))
 

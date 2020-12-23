@@ -40,7 +40,7 @@
 # include "glibcrand_arginfo_7.h"
 #endif
 
-PHPAPI zend_class_entry *ce_ORNG_GLibCRand;
+PHP_ORNG_API zend_class_entry *ce_ORNG_GLibCRand;
 
 static zend_object_handlers oh_GLibCRand;
 

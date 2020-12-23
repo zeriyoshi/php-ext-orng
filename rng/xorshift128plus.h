@@ -23,7 +23,7 @@
 
 # include "../orng_util.h"
 
-extern PHPAPI zend_class_entry *ce_ORNG_XorShift128Plus;
+extern PHP_ORNG_API zend_class_entry *ce_ORNG_XorShift128Plus;
 
 typedef struct _ORNG_XorShift128Plus_obj {
   uint64_t s[2];

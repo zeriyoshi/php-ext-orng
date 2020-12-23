@@ -11,4 +11,6 @@ if (PHP_ORNG != 'no') {
 		xorshift128plus.c \
 		mt19937.c \
 		", "orng");
+
+	ADD_FLAG("CFLAGS_ORNG", " /D PHP_ORNG_EXPORTS=1");
 }
